@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { BarChart, Scale, MessageCircle, Target, Frown, Equal, ArrowUpRight } from 'lucide-react';
 
 const scripts = {
   s1: {
@@ -52,19 +53,19 @@ export default function SalaryFeature() {
 
                         <div className="salary-perks rv" style={{ transitionDelay: '.1s' }}>
                             <div className="sp-item">
-                                <div className="sp-icon">📊</div>
+                                <div className="sp-icon" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}><BarChart size={24} color="var(--teal)" strokeWidth={1.5} /></div>
                                 <div><div className="sp-label">Data Gaji Pasar</div><div className="sp-text">Perbandingan rentang gaji berdasarkan posisi, kota, dan level pengalaman.</div></div>
                             </div>
                             <div className="sp-item">
-                                <div className="sp-icon">⚖️</div>
+                                <div className="sp-icon" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Scale size={24} color="var(--teal)" strokeWidth={1.5} /></div>
                                 <div><div className="sp-label">Posisi Tawar</div><div className="sp-text">Kamu tahu seberapa kuat posisimu sebelum duduk di meja negosiasi.</div></div>
                             </div>
                             <div className="sp-item">
-                                <div className="sp-icon">💬</div>
+                                <div className="sp-icon" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}><MessageCircle size={24} color="var(--teal)" strokeWidth={1.5} /></div>
                                 <div><div className="sp-label">Kalimat Siap Pakai</div><div className="sp-text">Script yang sudah terbukti — dikembangkan bersama para profesional HR.</div></div>
                             </div>
                             <div className="sp-item">
-                                <div className="sp-icon">🎯</div>
+                                <div className="sp-icon" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Target size={24} color="var(--teal)" strokeWidth={1.5} /></div>
                                 <div><div className="sp-label">Personalisasi</div><div className="sp-text">Rekomendasi berbeda untuk fresh grad, career switch, dan senior level.</div></div>
                             </div>
                         </div>
@@ -79,7 +80,9 @@ export default function SalaryFeature() {
                                     <div className="barg-thumb"></div>
                                 </div>
                                 <div className="barg-markers">
-                                    <span>😰 Lemah</span><span>⚖️ Netral</span><span>💪 Kuat</span>
+                                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Frown size={14}/> Lemah</span>
+                                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Equal size={14}/> Netral</span>
+                                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><ArrowUpRight size={14}/> Kuat</span>
                                 </div>
                             </div>
                             <div className="sal-pos">Berdasarkan deskripsi role dan skill yang kamu punya, posisimu <strong>netral cenderung kuat</strong>. Skill Figma adalah leverage nyata kamu.</div>

@@ -1,6 +1,13 @@
 import React from 'react';
+import { Star } from 'lucide-react';
 
 export default function Testimonials() {
+    const renderStars = () => (
+        <div style={{ display: 'flex', gap: '2px', color: '#FCD34D' }}>
+            {[...Array(5)].map((_, i) => <Star key={i} size={16} fill="currentColor" strokeWidth={0} />)}
+        </div>
+    );
+
     return (
         <section className="section">
             <div className="container">
@@ -10,7 +17,7 @@ export default function Testimonials() {
                 </div>
                 <div className="testi-grid">
                     <div className="testi rv">
-                        <div className="t-stars">⭐⭐⭐⭐⭐</div>
+                        <div className="t-stars">{renderStars()}</div>
                         <div className="t-text">"Hampir kena scam lowongan yang minta bayar 'seragam' dulu. Untung cek di KerjaSyik dulu dan langsung kelihatan red flag-nya."</div>
                         <div className="t-author">
                             <div className="t-avatar" style={{ background: 'linear-gradient(135deg,var(--teal),var(--teal-d))' }}>R</div>
@@ -18,7 +25,7 @@ export default function Testimonials() {
                         </div>
                     </div>
                     <div className="testi rv" style={{ transitionDelay: '.08s' }}>
-                        <div className="t-stars">⭐⭐⭐⭐⭐</div>
+                        <div className="t-stars">{renderStars()}</div>
                         <div className="t-text">"Fitur negosiasi gajinya ngebantu banget. Aku yang biasanya grogi langsung dikasih angka, sekarang bisa jawab dengan percaya diri."</div>
                         <div className="t-author">
                             <div className="t-avatar" style={{ background: 'linear-gradient(135deg,#7C3AED,#4F46E5)' }}>S</div>
@@ -26,7 +33,7 @@ export default function Testimonials() {
                         </div>
                     </div>
                     <div className="testi rv" style={{ transitionDelay: '.16s' }}>
-                        <div className="t-stars">⭐⭐⭐⭐⭐</div>
+                        <div className="t-stars">{renderStars()}</div>
                         <div className="t-text">"Penjelasannya nggak bikin parno, tapi tetap informatif. Kayak dikasih tahu sama teman yang udah lebih berpengalaman soal dunia kerja."</div>
                         <div className="t-author">
                             <div className="t-avatar" style={{ background: 'linear-gradient(135deg,#D97706,#B45309)' }}>A</div>

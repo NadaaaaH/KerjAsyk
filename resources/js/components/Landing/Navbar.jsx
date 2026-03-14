@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Search } from 'lucide-react';
 
 export default function Navbar() {
     return (
@@ -14,7 +15,9 @@ export default function Navbar() {
                 <Link className="nav-a" to="/gaji">Info Gaji</Link>
                 <Link className="nav-a" to="/">Kenapa Kami</Link>
             </div>
-            <Link className="nav-cta" to="/scan">🔍 &nbsp;Scan Sekarang</Link>
+            <Link className="nav-cta" to="/scan" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                <Search size={16} strokeWidth={2.5} /> Scan Sekarang
+            </Link>
         </nav>
     );
 }

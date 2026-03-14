@@ -1,4 +1,9 @@
 import React, { useState } from 'react';
+import { 
+    Search, Building, ShoppingCart, Truck, XOctagon, Rocket, 
+    Package, AlertTriangle, CheckCircle2, AlertCircle, Zap, 
+    DollarSign, FileText, Lock 
+} from 'lucide-react';
 
 export default function CompanyProfile() {
     const [showDetail, setShowDetail] = useState(false);
@@ -29,7 +34,7 @@ export default function CompanyProfile() {
                 </div>
 
                 <div className="perus-search rv">
-                    <span style={{ fontSize: '16px' }}>🔍</span>
+                    <span style={{ fontSize: '16px', display: 'flex', alignItems: 'center', color: 'var(--ink4)' }}><Search size={20} /></span>
                     <input 
                         className="perus-input" 
                         placeholder="Cari perusahaan… (contoh: PT Maju Bersama, tokopedia.com)" 
@@ -43,12 +48,12 @@ export default function CompanyProfile() {
                 {/* Company cards */}
                 <div className="co-grid" id="coGrid">
                     <div className="co-card rv" onClick={toggleDetail}>
-                        <div className="co-logo-placeholder">🏢</div>
+                        <div className="co-logo-placeholder" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Building size={24} color="var(--teal)" /></div>
                         <div className="co-name">PT Maju Bersama Digital</div>
                         <div className="co-loc">📍 Jakarta Selatan · Teknologi</div>
                         <div className="co-chips">
-                            <span className="co-chip cc-warn">⚠️ Perlu Hati-hati</span>
-                            <span className="co-chip cc-safe">✓ Terverifikasi</span>
+                            <span className="co-chip cc-warn" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><AlertTriangle size={12}/> Perlu Hati-hati</span>
+                            <span className="co-chip cc-safe" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><CheckCircle2 size={12}/> Terverifikasi</span>
                         </div>
                         <div className="co-score-row">
                             <div className="co-bar"><div className="co-fill" style={{ width: '54%', background: 'var(--amber)' }}></div></div>
@@ -56,12 +61,12 @@ export default function CompanyProfile() {
                         </div>
                     </div>
                     <div className="co-card rv" style={{ transitionDelay: '.07s' }}>
-                        <div className="co-logo-placeholder">🛒</div>
+                        <div className="co-logo-placeholder" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}><ShoppingCart size={24} color="var(--teal)" /></div>
                         <div className="co-name">Tokopedia</div>
                         <div className="co-loc">📍 Jakarta · E-commerce</div>
                         <div className="co-chips">
-                            <span className="co-chip cc-safe">✓ Aman</span>
-                            <span className="co-chip cc-safe">✓ Unicorn</span>
+                            <span className="co-chip cc-safe" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><CheckCircle2 size={12}/> Aman</span>
+                            <span className="co-chip cc-safe" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><CheckCircle2 size={12}/> Unicorn</span>
                         </div>
                         <div className="co-score-row">
                             <div className="co-bar"><div className="co-fill" style={{ width: '94%', background: 'var(--teal)' }}></div></div>
@@ -69,12 +74,12 @@ export default function CompanyProfile() {
                         </div>
                     </div>
                     <div className="co-card rv" style={{ transitionDelay: '.14s' }}>
-                        <div className="co-logo-placeholder">🛵</div>
+                        <div className="co-logo-placeholder" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Truck size={24} color="var(--teal)" /></div>
                         <div className="co-name">Gojek</div>
                         <div className="co-loc">📍 Jakarta · Super App</div>
                         <div className="co-chips">
-                            <span className="co-chip cc-safe">✓ Aman</span>
-                            <span className="co-chip cc-safe">✓ Verified</span>
+                            <span className="co-chip cc-safe" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><CheckCircle2 size={12}/> Aman</span>
+                            <span className="co-chip cc-safe" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><CheckCircle2 size={12}/> Verified</span>
                         </div>
                         <div className="co-score-row">
                             <div className="co-bar"><div className="co-fill" style={{ width: '91%', background: 'var(--teal)' }}></div></div>
@@ -82,11 +87,11 @@ export default function CompanyProfile() {
                         </div>
                     </div>
                     <div className="co-card rv" style={{ transitionDelay: '.21s' }}>
-                        <div className="co-logo-placeholder">🎰</div>
+                        <div className="co-logo-placeholder" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}><XOctagon size={24} color="var(--rose)" /></div>
                         <div className="co-name">MLM Cepat Kaya</div>
                         <div className="co-loc">📍 Tidak Dikenal · MLM</div>
                         <div className="co-chips">
-                            <span className="co-chip cc-risk">🚨 Risiko Tinggi</span>
+                            <span className="co-chip cc-risk" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><AlertCircle size={12}/> Risiko Tinggi</span>
                         </div>
                         <div className="co-score-row">
                             <div className="co-bar"><div className="co-fill" style={{ width: '12%', background: 'var(--rose)' }}></div></div>
@@ -94,11 +99,11 @@ export default function CompanyProfile() {
                         </div>
                     </div>
                     <div className="co-card rv" style={{ transitionDelay: '.28s' }}>
-                        <div className="co-logo-placeholder">🚀</div>
+                        <div className="co-logo-placeholder" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Rocket size={24} color="var(--teal)" /></div>
                         <div className="co-name">CV Digital Solusi</div>
                         <div className="co-loc">📍 Bandung · Startup</div>
                         <div className="co-chips">
-                            <span className="co-chip cc-safe">✓ Aman</span>
+                            <span className="co-chip cc-safe" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><CheckCircle2 size={12}/> Aman</span>
                         </div>
                         <div className="co-score-row">
                             <div className="co-bar"><div className="co-fill" style={{ width: '85%', background: 'var(--teal)' }}></div></div>
@@ -106,11 +111,11 @@ export default function CompanyProfile() {
                         </div>
                     </div>
                     <div className="co-card rv" style={{ transitionDelay: '.35s' }}>
-                        <div className="co-logo-placeholder">📦</div>
+                        <div className="co-logo-placeholder" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Package size={24} color="var(--teal)" /></div>
                         <div className="co-name">PT Karya Muda Nusantara</div>
                         <div className="co-loc">📍 Surabaya · Jasa</div>
                         <div className="co-chips">
-                            <span className="co-chip cc-warn">⚠️ Cek Dulu</span>
+                            <span className="co-chip cc-warn" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><AlertTriangle size={12}/> Cek Dulu</span>
                         </div>
                         <div className="co-score-row">
                             <div className="co-bar"><div className="co-fill" style={{ width: '62%', background: 'var(--amber)' }}></div></div>
@@ -123,13 +128,13 @@ export default function CompanyProfile() {
                 {showDetail && (
                     <div className="company-detail rv in" id="coDetail">
                         <div className="cd-header">
-                            <div className="cd-logo">🏢</div>
+                            <div className="cd-logo" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Building size={40} color="var(--teal)" /></div>
                             <div className="cd-meta">
                                 <div className="cd-name">PT Maju Bersama Digital</div>
                                 <div className="cd-industry">Teknologi · Jasa Profesional · Jakarta Selatan</div>
                                 <div className="cd-chips">
-                                    <span className="cd-chip chip-amber">⚠️ Perlu Perhatian</span>
-                                    <span className="cd-chip chip-teal">✓ Kontak Terverifikasi</span>
+                                    <span className="cd-chip chip-amber" style={{ display: 'inline-flex', gap: '4px' }}><AlertTriangle size={14}/> Perlu Perhatian</span>
+                                    <span className="cd-chip chip-teal" style={{ display: 'inline-flex', gap: '4px' }}><CheckCircle2 size={14}/> Kontak Terverifikasi</span>
                                     <span className="cd-chip chip-ink">📍 Jakarta</span>
                                     <span className="cd-chip chip-ink">📅 Aktif 2019–2025</span>
                                 </div>
@@ -157,25 +162,25 @@ export default function CompanyProfile() {
                             <div className="r-label">Pola Lowongan yang Kami Observasi</div>
                             <div className="pattern-grid-2">
                                 <div className="pattern-card">
-                                    <span className="pc-icon">⚡</span>
+                                    <span className="pc-icon" style={{ display: 'flex', justifyContent: 'center' }}><Zap size={22} color="var(--amber)" /></span>
                                     <div className="pc-title">Proses interview sangat cepat</div>
                                     <div className="pc-desc">Dipanggil dalam hitungan jam setelah apply — pola yang sering muncul di lowongan berisiko.</div>
                                     <span className="pc-badge" style={{ background: 'var(--amber-bg)', color: 'var(--amber)' }}>Perlu Dicermati</span>
                                 </div>
                                 <div className="pattern-card">
-                                    <span className="pc-icon">💰</span>
+                                    <span className="pc-icon" style={{ display: 'flex', justifyContent: 'center' }}><DollarSign size={22} color="var(--rose)" /></span>
                                     <div className="pc-title">Minta biaya awal</div>
                                     <div className="pc-desc">Beberapa laporan menyebut diminta beli "starter kit" atau "seragam" sebelum mulai kerja.</div>
                                     <span className="pc-badge" style={{ background: 'var(--rose-bg)', color: 'var(--rose)' }}>Red Flag</span>
                                 </div>
                                 <div className="pattern-card">
-                                    <span className="pc-icon">📝</span>
+                                    <span className="pc-icon" style={{ display: 'flex', justifyContent: 'center' }}><FileText size={22} color="var(--amber)" /></span>
                                     <div className="pc-title">Deskripsi pekerjaan bervariasi</div>
                                     <div className="pc-desc">Job desc kadang berubah setelah apply — beda dari yang diiklankan.</div>
                                     <span className="pc-badge" style={{ background: 'var(--amber-bg)', color: 'var(--amber)' }}>Waspadai</span>
                                 </div>
                                 <div className="pattern-card">
-                                    <span className="pc-icon">✅</span>
+                                    <span className="pc-icon" style={{ display: 'flex', justifyContent: 'center' }}><CheckCircle2 size={22} color="var(--teal)" /></span>
                                     <div className="pc-title">Email rekrutmen resmi</div>
                                     <div className="pc-desc">Menggunakan domain email perusahaan sendiri, bukan Gmail atau Yahoo.</div>
                                     <span className="pc-badge" style={{ background: 'var(--teal-l)', color: 'var(--teal-d)' }}>Positif</span>
@@ -211,8 +216,8 @@ export default function CompanyProfile() {
                     </div>
                 )}
 
-                <div className="trust-note rv" style={{ marginTop: '28px' }}>
-                    <div className="tn-icon">🔐</div>
+                <div className="trust-note rv" style={{ marginTop: '28px', display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+                    <div className="tn-icon" style={{ display: 'flex', marginTop: '2px' }}><Lock size={20} color="var(--teal)" /></div>
                     <div>Data profil perusahaan dikumpulkan dari laporan pengguna, pola lowongan publik, dan sinyal digital. <strong>Bersifat indikatif</strong> — bukan jaminan keamanan. Selalu gunakan pertimbanganmu sendiri.</div>
                 </div>
             </div>

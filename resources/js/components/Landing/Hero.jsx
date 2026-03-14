@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Search, AlertTriangle, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 export default function Hero() {
     const [c1, setC1] = useState(0);
@@ -44,8 +45,8 @@ export default function Hero() {
                     Pasar kerja bisa bising dan membingungkan. KerjaSyik bantu kamu cek lowongan, kenali perusahaan, dan siapkan negosiasi gaji — semuanya gratis, tanpa akun.
                 </p>
                 <div className="hero-btns">
-                    <button className="btn-g" onClick={() => document.getElementById('scan')?.scrollIntoView({behavior:'smooth'})}>
-                        🔍 &nbsp;Scan Lowongan
+                    <button className="btn-g" onClick={() => document.getElementById('scan')?.scrollIntoView({behavior:'smooth'})} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                        <Search size={18} strokeWidth={2.5} /> Scan Lowongan
                     </button>
                     <button className="btn-o" onClick={() => document.getElementById('perusahaan')?.scrollIntoView({behavior:'smooth'})}>
                         Lihat Profil Perusahaan →
@@ -70,9 +71,9 @@ export default function Hero() {
                         </div>
                         <div className="hc-bar-track"><div className="hc-bar-fill"></div></div>
                         <div className="hc-flags">
-                            <div className="hc-flag"><span>🚨</span>Minta biaya seragam di depan</div>
-                            <div className="hc-flag"><span>⚠️</span>Tidak ada info perusahaan jelas</div>
-                            <div className="hc-flag"><span>✅</span>Deskripsi kerja cukup masuk akal</div>
+                            <div className="hc-flag"><span><AlertTriangle size={16} color="var(--rose)" /></span>Minta biaya seragam di depan</div>
+                            <div className="hc-flag"><span><AlertCircle size={16} color="var(--amber)" /></span>Tidak ada info perusahaan jelas</div>
+                            <div className="hc-flag"><span><CheckCircle2 size={16} color="var(--teal)" /></span>Deskripsi kerja cukup masuk akal</div>
                         </div>
                     </div>
                     {/* Mini card: salary */}

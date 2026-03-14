@@ -1,4 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { 
+    CheckCircle2, AlertTriangle, AlertCircle, Link as LinkIcon, 
+    Clipboard, Image as ImageIcon, Camera, BookOpen, Search, 
+    Building, Scale, MapPin, Briefcase 
+} from 'lucide-react';
 
 const scanResults = {
   safe: {
@@ -8,10 +13,10 @@ const scanResults = {
     desc: 'Tidak ditemukan red flag signifikan. Kontak resmi, deskripsi kerja jelas, dan prosesnya sesuai standar rekrutmen normal.',
     fillPct: '87%',
     evidence: [
-      {type:'good',icon:'✅',title:'Email domain perusahaan resmi',desc:'Menggunakan domain @perusahaan.co.id — bukan Gmail atau Yahoo gratis.',src:'Dari teks'},
-      {type:'good',icon:'✅',title:'Deskripsi pekerjaan spesifik',desc:'Jobdesk, kualifikasi, dan benefit tertera jelas. Bukan sekadar "kerja mudah gaji gede".',src:'Analisis teks'},
-      {type:'good',icon:'✅',title:'Tidak ada minta biaya apapun',desc:'Tidak ditemukan frasa yang meminta pembayaran, deposit, atau "biaya pendaftaran".',src:'Pola bahasa'},
-      {type:'warn',icon:'⚠️',title:'Deadline sangat singkat',desc:'Waktu melamar cukup pendek — bisa jadi teknik urgency, tapi bisa juga memang kebutuhan mendesak.',src:'Analisis konteks'}
+      {type:'good',icon:<CheckCircle2 size={18} color="var(--teal)" />,title:'Email domain perusahaan resmi',desc:'Menggunakan domain @perusahaan.co.id — bukan Gmail atau Yahoo gratis.',src:'Dari teks'},
+      {type:'good',icon:<CheckCircle2 size={18} color="var(--teal)" />,title:'Deskripsi pekerjaan spesifik',desc:'Jobdesk, kualifikasi, dan benefit tertera jelas. Bukan sekadar "kerja mudah gaji gede".',src:'Analisis teks'},
+      {type:'good',icon:<CheckCircle2 size={18} color="var(--teal)" />,title:'Tidak ada minta biaya apapun',desc:'Tidak ditemukan frasa yang meminta pembayaran, deposit, atau "biaya pendaftaran".',src:'Pola bahasa'},
+      {type:'warn',icon:<AlertTriangle size={18} color="var(--amber)" />,title:'Deadline sangat singkat',desc:'Waktu melamar cukup pendek — bisa jadi teknik urgency, tapi bisa juga memang kebutuhan mendesak.',src:'Analisis konteks'}
     ]
   },
   risk: {
@@ -21,11 +26,11 @@ const scanResults = {
     desc: 'Kami menemukan beberapa pola klasik penipuan kerja. Jangan transfer uang apapun, dan hindari memberikan data pribadi sebelum verifikasi lebih lanjut.',
     fillPct: '18%',
     evidence: [
-      {type:'bad',icon:'🚨',title:'Minta biaya registrasi / deposit',desc:'Lowongan kerja resmi tidak pernah meminta pembayaran apapun di awal proses.',src:'Pola bahasa'},
-      {type:'bad',icon:'🚨',title:'Klaim penghasilan tidak realistis',desc:'"Jutaan per hari" atau "gaji ratusan ribu per hari" hampir selalu indikator penipuan.',src:'Analisis klaim'},
-      {type:'bad',icon:'🚨',title:'Tidak ada identitas perusahaan jelas',desc:'Tidak ada nama PT/CV resmi, website, atau alamat kantor yang bisa diverifikasi.',src:'Verifikasi kontak'},
-      {type:'warn',icon:'⚠️',title:'Bahasa sangat provokatif & urgent',desc:'Banyak tanda seru, huruf kapital, dan tekanan waktu — taktik klasik untuk mengabaikan akal sehat.',src:'Pola bahasa'},
-      {type:'warn',icon:'⚠️',title:'Kontak hanya WA pribadi',desc:'Rekruter dari perusahaan resmi biasanya menggunakan email korporat, bukan nomor WA biasa.',src:'Info kontak'}
+      {type:'bad',icon:<AlertCircle size={18} color="var(--rose)" />,title:'Minta biaya registrasi / deposit',desc:'Lowongan kerja resmi tidak pernah meminta pembayaran apapun di awal proses.',src:'Pola bahasa'},
+      {type:'bad',icon:<AlertCircle size={18} color="var(--rose)" />,title:'Klaim penghasilan tidak realistis',desc:'"Jutaan per hari" atau "gaji ratusan ribu per hari" hampir selalu indikator penipuan.',src:'Analisis klaim'},
+      {type:'bad',icon:<AlertCircle size={18} color="var(--rose)" />,title:'Tidak ada identitas perusahaan jelas',desc:'Tidak ada nama PT/CV resmi, website, atau alamat kantor yang bisa diverifikasi.',src:'Verifikasi kontak'},
+      {type:'warn',icon:<AlertTriangle size={18} color="var(--amber)" />,title:'Bahasa sangat provokatif & urgent',desc:'Banyak tanda seru, huruf kapital, dan tekanan waktu — taktik klasik untuk mengabaikan akal sehat.',src:'Pola bahasa'},
+      {type:'warn',icon:<AlertTriangle size={18} color="var(--amber)" />,title:'Kontak hanya WA pribadi',desc:'Rekruter dari perusahaan resmi biasanya menggunakan email korporat, bukan nomor WA biasa.',src:'Info kontak'}
     ]
   },
   warn: {
@@ -35,11 +40,11 @@ const scanResults = {
     desc: 'Lowongan ini punya sinyal campur — ada yang positif, ada yang perlu dicermati lebih jauh. Bukan berarti pasti penipuan, tapi lakukan verifikasi sebelum lanjut.',
     fillPct: '54%',
     evidence: [
-      {type:'good',icon:'✅',title:'Email domain perusahaan',desc:'Menggunakan email @perusahaan.com — tanda yang cukup baik.',src:'Dari teks'},
-      {type:'good',icon:'✅',title:'Deskripsi kerja masuk akal',desc:'Jobdesk spesifik dan ekspektasi tidak berlebihan.',src:'Analisis teks'},
-      {type:'bad',icon:'🚨',title:'Proses interview sangat cepat',desc:'Dipanggil dalam hitungan jam — sering jadi pola lowongan berisiko.',src:'Pola rekrutmen'},
-      {type:'warn',icon:'⚠️',title:'Info perusahaan minim',desc:'Tidak ditemukan website atau alamat kantor yang bisa dikonfirmasi secara mandiri.',src:'Verifikasi kontak'},
-      {type:'warn',icon:'⚠️',title:'Tidak ada info rentang gaji',desc:'Bukan red flag besar, tapi transparansi gaji adalah tanda perusahaan yang sehat.',src:'Analisis konten'}
+      {type:'good',icon:<CheckCircle2 size={18} color="var(--teal)" />,title:'Email domain perusahaan',desc:'Menggunakan email @perusahaan.com — tanda yang cukup baik.',src:'Dari teks'},
+      {type:'good',icon:<CheckCircle2 size={18} color="var(--teal)" />,title:'Deskripsi kerja masuk akal',desc:'Jobdesk spesifik dan ekspektasi tidak berlebihan.',src:'Analisis teks'},
+      {type:'bad',icon:<AlertCircle size={18} color="var(--rose)" />,title:'Proses interview sangat cepat',desc:'Dipanggil dalam hitungan jam — sering jadi pola lowongan berisiko.',src:'Pola rekrutmen'},
+      {type:'warn',icon:<AlertTriangle size={18} color="var(--amber)" />,title:'Info perusahaan minim',desc:'Tidak ditemukan website atau alamat kantor yang bisa dikonfirmasi secara mandiri.',src:'Verifikasi kontak'},
+      {type:'warn',icon:<AlertTriangle size={18} color="var(--amber)" />,title:'Tidak ada info rentang gaji',desc:'Bukan red flag besar, tapi transparansi gaji adalah tanda perusahaan yang sehat.',src:'Analisis konten'}
     ]
   }
 };
@@ -147,9 +152,9 @@ export default function ScanFeature() {
                     <div id="scanInputState">
                         <div className="scan-box rv">
                             <div className="scan-tabs">
-                                <button className={`scan-tab ${scanMode === 'link' ? 'on' : ''}`} onClick={() => setScanMode('link')}>🔗 Link</button>
-                                <button className={`scan-tab ${scanMode === 'text' ? 'on' : ''}`} onClick={() => setScanMode('text')}>📋 Teks</button>
-                                <button className={`scan-tab ${scanMode === 'img' ? 'on' : ''}`} onClick={() => setScanMode('img')}>🖼️ Foto <span className="new-pill">BARU</span></button>
+                                <button className={`scan-tab ${scanMode === 'link' ? 'on' : ''}`} onClick={() => setScanMode('link')} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}><LinkIcon size={14}/> Link</button>
+                                <button className={`scan-tab ${scanMode === 'text' ? 'on' : ''}`} onClick={() => setScanMode('text')} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}><Clipboard size={14}/> Teks</button>
+                                <button className={`scan-tab ${scanMode === 'img' ? 'on' : ''}`} onClick={() => setScanMode('img')} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}><ImageIcon size={14}/> Foto <span className="new-pill">BARU</span></button>
                             </div>
 
                             {scanMode === 'link' && (
@@ -176,7 +181,7 @@ export default function ScanFeature() {
                                     {!imgFile ? (
                                         <div className="upload-zone" onClick={() => fileRef.current?.click()}>
                                             <input type="file" ref={fileRef} accept="image/*" style={{ display: 'none' }} onChange={handleImg} />
-                                            <div className="uz-icon">📸</div>
+                                            <div className="uz-icon" style={{ display: 'flex', justifyContent: 'center' }}><Camera size={32} color="var(--ink3)" /></div>
                                             <div className="uz-text">Seret foto ke sini, atau klik untuk upload</div>
                                             <div className="uz-sub">Screenshot WhatsApp, poster lowongan, foto flyer · JPG / PNG / WEBP</div>
                                             <div className="uz-btn">Pilih File</div>
@@ -208,25 +213,25 @@ export default function ScanFeature() {
 
                         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'center', marginTop: '16px' }} className="rv">
                             <span style={{ fontSize: '11.5px', color: 'rgba(255,255,255,.28)', fontWeight: '500', paddingTop: '6px' }}>Coba contoh:</span>
-                            <button className="ex-btn" onClick={() => fillExample('link')}>📎 Link Jobstreet</button>
-                            <button className="ex-btn" onClick={() => fillExample('text')}>📋 Teks WhatsApp</button>
-                            <button className="ex-btn" onClick={() => fillExample('text2')}>⚠️ Lowongan Mencurigakan</button>
+                            <button className="ex-btn" onClick={() => fillExample('link')} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}><LinkIcon size={12}/> Link Jobstreet</button>
+                            <button className="ex-btn" onClick={() => fillExample('text')} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}><Clipboard size={12}/> Teks WhatsApp</button>
+                            <button className="ex-btn" onClick={() => fillExample('text2')} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}><AlertTriangle size={12}/> Lowongan Mencurigakan</button>
                         </div>
                     </div>
                 )}
 
                 {scanState === 'loading' && (
                     <div className="scan-loading on">
-                        <div className="orbit-wrap">
+                        <div className="orbit-wrap" style={{ position: 'relative' }}>
                             <div className="o-ring"></div>
                             <div className="o-ring o-ring2"></div>
-                            <div className="o-center">{scanMode === 'img' ? '🖼️' : '🔍'}</div>
+                            <div className="o-center" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', left: '16px', top: '16px', position: 'absolute' }}>{scanMode === 'img' ? <ImageIcon size={28} color="white"/> : <Search size={28} color="white" />}</div>
                         </div>
                         <div className="loading-steps">
-                            <div className={`l-step ${step === 1 ? 'active' : step > 1 ? 'done' : ''}`}><span className="l-step-icon">📖</span><span>{scanMode === 'img' ? 'Membaca gambar yang kamu upload…' : 'Membaca informasi dari input kamu…'}</span><span className="l-step-dot"></span></div>
-                            <div className={`l-step ${step === 2 ? 'active' : step > 2 ? 'done' : ''}`}><span className="l-step-icon">🔍</span><span>Memeriksa pola bahasa dan frasa…</span><span className="l-step-dot"></span></div>
-                            <div className={`l-step ${step === 3 ? 'active' : step > 3 ? 'done' : ''}`}><span className="l-step-icon">🏢</span><span>Mencari info kontak dan perusahaan…</span><span className="l-step-dot"></span></div>
-                            <div className={`l-step ${step === 4 ? 'active' : step > 4 ? 'done' : ''}`}><span className="l-step-icon">⚖️</span><span>Menimbang semua indikator…</span><span className="l-step-dot"></span></div>
+                            <div className={`l-step ${step === 1 ? 'active' : step > 1 ? 'done' : ''}`}><span className="l-step-icon"><BookOpen size={16}/></span><span>{scanMode === 'img' ? 'Membaca gambar yang kamu upload…' : 'Membaca informasi dari input kamu…'}</span><span className="l-step-dot"></span></div>
+                            <div className={`l-step ${step === 2 ? 'active' : step > 2 ? 'done' : ''}`}><span className="l-step-icon"><Search size={16}/></span><span>Memeriksa pola bahasa dan frasa…</span><span className="l-step-dot"></span></div>
+                            <div className={`l-step ${step === 3 ? 'active' : step > 3 ? 'done' : ''}`}><span className="l-step-icon"><Building size={16}/></span><span>Mencari info kontak dan perusahaan…</span><span className="l-step-dot"></span></div>
+                            <div className={`l-step ${step === 4 ? 'active' : step > 4 ? 'done' : ''}`}><span className="l-step-icon"><Scale size={16}/></span><span>Menimbang semua indikator…</span><span className="l-step-dot"></span></div>
                         </div>
                         <p style={{ fontSize: '13px', color: 'rgba(255,255,255,.25)', marginTop: '20px', fontStyle: 'italic' }}>Sebentar ya, lagi dicek dengan teliti…</p>
                     </div>
@@ -259,11 +264,11 @@ export default function ScanFeature() {
                         <div className="ev-list">
                             {resultData.evidence.map((ev, i) => (
                                 <div key={i} className={`ev-item ${ev.type} ${evIn.includes(i) ? 'in' : ''}`} style={{ transitionDelay: `${i * 0.1}s` }}>
-                                    <div className="ev-icon-wrap">{ev.icon}</div>
+                                    <div className="ev-icon-wrap" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{ev.icon}</div>
                                     <div className="ev-content">
                                         <div className="ev-title">{ev.title}</div>
                                         <div className="ev-desc">{ev.desc}</div>
-                                        <span className="ev-src">📌 {ev.src}</span>
+                                        <span className="ev-src" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><MapPin size={10} /> {ev.src}</span>
                                     </div>
                                 </div>
                             ))}
@@ -271,7 +276,7 @@ export default function ScanFeature() {
 
                         <div className="result-actions">
                             <button className="result-reset" onClick={resetScan}>← Scan lowongan lain</button>
-                            <button className="result-salary-cta" onClick={() => document.getElementById('gaji')?.scrollIntoView({behavior: 'smooth'})}>💼 Cek posisi tawar gajimu</button>
+                            <button className="result-salary-cta" onClick={() => document.getElementById('gaji')?.scrollIntoView({behavior: 'smooth'})} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><Briefcase size={16}/> Cek posisi tawar gajimu</button>
                         </div>
                         <div className="result-disclaimer">
                             Hasil analisis bersifat indikatif berdasarkan pola yang kami kenali. Bukan jaminan. Selalu gunakan pertimbanganmu sendiri.
