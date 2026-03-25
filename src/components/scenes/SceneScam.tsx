@@ -1,7 +1,6 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { AlertTriangle, ShieldAlert, XCircle } from "lucide-react";
-import MascotGuide from "@/components/MascotGuide";
 
 const scamCards = [
   { title: "Marketing Manager", company: "PT Sukses Bersama", salary: "Rp 20.000.000/minggu", flag: "Gaji tidak realistis", icon: AlertTriangle },
@@ -53,58 +52,37 @@ const SceneScam = () => {
           </p>
         </motion.div>
 
-        <div className="relative">
-          <div className="grid md:grid-cols-3 gap-6">
-            {scamCards.map((card, i) => (
-              <motion.div
-                key={i}
-                className="relative rounded-3xl p-6 glass-surface group"
-                data-warning
-                style={{ borderColor: "hsl(var(--danger) / 0.15)", transformStyle: "preserve-3d", perspective: "800px" }}
-                initial={{ opacity: 0, y: 60, rotateX: 8, scale: 0.95 }}
-                whileInView={{ opacity: 1, y: 0, rotateX: 0, scale: 1 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: i * 0.15 }}
-                whileHover={{ scale: 1.03, y: -4, boxShadow: "0 20px 40px hsl(0 84% 55% / 0.1)", transition: { duration: 0.3 } }}
-              >
-                <div className="mb-4">
-                  <p className="font-semibold text-foreground">{card.title}</p>
-                  <p className="text-sm text-muted-foreground">{card.company}</p>
-                </div>
-                <p className="text-sm text-muted-foreground mb-4">{card.salary}</p>
-                <motion.div
-                  className="flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold"
-                  style={{ background: "hsl(var(--danger) / 0.08)", color: "hsl(var(--danger))", border: "1px solid hsl(var(--danger) / 0.15)" }}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 0.4 + i * 0.1 }}
-                >
-                  <card.icon className="w-3.5 h-3.5" />
-                  {card.flag}
-                </motion.div>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Maskot pojok kanan bawah */}
-          <motion.div
-            className="absolute -bottom-8 -right-16 z-20 hidden md:block"
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.5 }}
-          >
+        <div className="grid md:grid-cols-3 gap-6">
+          {scamCards.map((card, i) => (
             <motion.div
-              className="absolute -top-10 -left-28 glass-surface rounded-2xl px-4 py-2 text-xs font-semibold whitespace-nowrap z-10"
-              style={{ color: "hsl(var(--danger))", borderColor: "hsl(var(--danger) / 0.15)" }}
-              animate={{ y: [0, -5, 0] }}
-              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+              key={i}
+              className="relative rounded-3xl p-6 glass-surface group"
+              data-warning
+              style={{ borderColor: "hsl(var(--danger) / 0.15)", transformStyle: "preserve-3d", perspective: "800px" }}
+              initial={{ opacity: 0, y: 60, rotateX: 8, scale: 0.95 }}
+              whileInView={{ opacity: 1, y: 0, rotateX: 0, scale: 1 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: i * 0.15 }}
+              whileHover={{ scale: 1.03, y: -4, boxShadow: "0 20px 40px hsl(0 84% 55% / 0.1)", transition: { duration: 0.3 } }}
             >
-              Hati-hati ya!
+              <div className="mb-4">
+                <p className="font-semibold text-foreground">{card.title}</p>
+                <p className="text-sm text-muted-foreground">{card.company}</p>
+              </div>
+              <p className="text-sm text-muted-foreground mb-4">{card.salary}</p>
+              <motion.div
+                className="flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold"
+                style={{ background: "hsl(var(--danger) / 0.08)", color: "hsl(var(--danger))", border: "1px solid hsl(var(--danger) / 0.15)" }}
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.4 + i * 0.1 }}
+              >
+                <card.icon className="w-3.5 h-3.5" />
+                {card.flag}
+              </motion.div>
             </motion.div>
-            <MascotGuide width="200px" height="240px" />
-          </motion.div>
+          ))}
         </div>
       </motion.div>
     </section>

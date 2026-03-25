@@ -18,7 +18,6 @@ const SceneAdvice = () => {
   const mouseY = useMotionValue(0);
   const smoothX = useSpring(mouseX, { stiffness: 40, damping: 15 });
   const smoothY = useSpring(mouseY, { stiffness: 40, damping: 15 });
-
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const mascotScale = useTransform(scrollYProgress, [0.1, 0.5], [0.6, 1]);
   const mascotOpacity = useTransform(scrollYProgress, [0.1, 0.35], [0, 1]);
@@ -53,32 +52,23 @@ const SceneAdvice = () => {
       }} />
 
       <motion.div className="relative z-10 max-w-5xl mx-auto px-6 w-full" style={{ y: parallaxY }}>
-       <div className="flex flex-col md:flex-row items-center gap-12 md:gap-16 min-h-[400px]">
+        <div className="flex flex-col md:flex-row items-center gap-12 md:gap-16 min-h-[400px]">
 
           {/* Kiri: Maskot */}
           <motion.div
-  className="flex-shrink-0"
-  style={{
-    scale: mascotScale,
-    opacity: mascotOpacity,
-    x: isMobile ? 0 : mascotX,
-    y: isMobile ? 0 : mascotY,
-  }}
->
-  <div style={{ width: isMobile ? "240px" : "320px", height: isMobile ? "240px" : "340px", minWidth: isMobile ? "240px" : "320px", position: "relative" }}>
-  {/* Fallback PNG */}
-  <img
-    src="/src/assets/guide-character.glb"
-    alt="mascot"
-    style={{
-      position: "absolute", inset: 0,
-      width: "100%", height: "100%",
-      objectFit: "contain",
-      filter: "drop-shadow(0 20px 40px hsl(160 65% 40% / 0.2))",
-    }}
-  />
-</div>
-</motion.div>
+            className="flex-shrink-0"
+            style={{
+              scale: mascotScale,
+              opacity: mascotOpacity,
+              x: isMobile ? 0 : mascotX,
+              y: isMobile ? 0 : mascotY,
+            }}
+          >
+            <MascotGuide
+              width={isMobile ? "240px" : "320px"}
+              height={isMobile ? "240px" : "340px"}
+            />
+          </motion.div>
 
           {/* Kanan: Teks + tips */}
           <div className="flex-1">
@@ -122,6 +112,7 @@ const SceneAdvice = () => {
               ))}
             </div>
           </div>
+
         </div>
       </motion.div>
     </section>

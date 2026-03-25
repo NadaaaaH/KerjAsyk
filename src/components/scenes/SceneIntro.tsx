@@ -22,6 +22,61 @@ const chatBubbles = [
   { text: "DM aku ya kak", x: 16, y: 66, delay: 0.9 },
 ];
 
+// Komponen terpisah untuk tiap floating card agar hooks aman
+const FloatingCard = ({
+  card, index, smoothX, smoothY, isMobile,
+}: {
+  card: typeof floatingCards[0];
+  index: number;
+  smoothX: any;
+  smoothY: any;
+  isMobile: boolean;
+}) => {
+  const x = useTransform(smoothX, (v: number) => isMobile ? 0 : v * (6 + index * 1.5));
+  const y = useTransform(smoothY, (v: number) => isMobile ? 0 : v * (6 + index * 1.5));
+
+  return (
+    <motion.div
+      className="absolute glass-surface rounded-2xl px-4 py-2.5 text-xs font-medium select-none"
+      style={{
+        left: `${card.x}%`,
+        top: `${card.y}%`,
+        color: "hsl(var(--muted-foreground))",
+        x,
+        y,
+      }}
+      animate={{ y: [0, -10 - index * 1.5, 0], rotate: [0, index % 2 === 0 ? 1.2 : -1.2, 0] }}
+      transition={{ duration: 6 + index * 0.4, repeat: Infinity, ease: "easeInOut", delay: card.delay }}
+    >
+      {card.text}
+    </motion.div>
+  );
+};
+
+// Komponen terpisah untuk karakter tengah agar hooks aman
+const MascotWithParallax = ({
+  smoothX, smoothY, isMobile,
+}: {
+  smoothX: any;
+  smoothY: any;
+  isMobile: boolean;
+}) => {
+  const x = useTransform(smoothX, (v: number) => isMobile ? 0 : v * -12);
+  const y = useTransform(smoothY, (v: number) => isMobile ? 0 : v * -8);
+
+  return (
+    <motion.div
+      className="relative mt-"
+      initial={{ opacity: 0, scale: 0.9, y: 20 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1], delay: 0.4 }}
+      style={{ x, y }}
+    >
+      <Model3D width={isMobile ? "280px" : "400px"} height={isMobile ? "280px" : "400px"} />
+    </motion.div>
+  );
+};
+
 const SceneIntro = () => {
   const ref = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
@@ -29,7 +84,6 @@ const SceneIntro = () => {
   const mouseY = useMotionValue(0);
   const smoothX = useSpring(mouseX, { stiffness: 50, damping: 20 });
   const smoothY = useSpring(mouseY, { stiffness: 50, damping: 20 });
-
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "15%"]);
   const midY = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
@@ -38,7 +92,6 @@ const SceneIntro = () => {
   const textOpacity = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
   const textY = useTransform(scrollYProgress, [0, 0.4], ["0%", "-28%"]);
   const zoom = useTransform(scrollYProgress, [0, 0.8], [1, 1.06]);
-
   const [flickerOpacity, setFlickerOpacity] = useState(0.15);
 
   useEffect(() => {
@@ -86,19 +139,14 @@ const SceneIntro = () => {
       {/* Floating cards */}
       <motion.div className="absolute inset-0 z-10 pointer-events-none" style={{ y: midY }}>
         {floatingCards.map((card, i) => (
-          <motion.div key={i}
-            className="absolute glass-surface rounded-2xl px-4 py-2.5 text-xs font-medium select-none"
-            style={{
-              left: `${card.x}%`, top: `${card.y}%`,
-              color: "hsl(var(--muted-foreground))",
-              x: isMobile ? 0 : useTransform(smoothX, (v) => v * (6 + i * 1.5)),
-              y: isMobile ? 0 : useTransform(smoothY, (v) => v * (6 + i * 1.5)),
-            }}
-            animate={{ y: [0, -10 - i * 1.5, 0], rotate: [0, i % 2 === 0 ? 1.2 : -1.2, 0] }}
-            transition={{ duration: 6 + i * 0.4, repeat: Infinity, ease: "easeInOut", delay: card.delay }}
-          >
-            {card.text}
-          </motion.div>
+          <FloatingCard
+            key={i}
+            card={card}
+            index={i}
+            smoothX={smoothX}
+            smoothY={smoothY}
+            isMobile={isMobile}
+          />
         ))}
         {chatBubbles.map((bubble, i) => (
           <motion.div key={`chat-${i}`}
@@ -112,7 +160,7 @@ const SceneIntro = () => {
         ))}
       </motion.div>
 
-      {/* Foreground — semua di tengah */}
+      {/* Foreground */}
       <motion.div
         className="relative z-20 flex flex-col items-center gap-6 px-6"
         style={{ scale: fgScale, y: fgY }}
@@ -125,7 +173,6 @@ const SceneIntro = () => {
           >
             KerjaSyik
           </motion.p>
-
           <motion.h1
             className="text-display text-foreground mb-6"
             initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
@@ -135,7 +182,6 @@ const SceneIntro = () => {
             <br />
             <span className="text-primary">jadi teka-teki.</span>
           </motion.h1>
-
           <motion.p
             className="text-body-scene text-muted-foreground mx-auto mb-8"
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
@@ -143,7 +189,6 @@ const SceneIntro = () => {
           >
             Deteksi penipuan. Bandingkan gaji. Melangkah pasti.
           </motion.p>
-
           <motion.div
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.7 }}
@@ -186,18 +231,7 @@ const SceneIntro = () => {
         </motion.div>
 
         {/* Karakter tengah */}
-        <motion.div
-  className="relative mt-"
-  initial={{ opacity: 0, scale: 0.9, y: 20 }}
-  animate={{ opacity: 1, scale: 1, y: 0 }}
-  transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1], delay: 0.4 }}
-  style={{
-    x: isMobile ? 0 : useTransform(smoothX, (v) => v * -12),
-    y: isMobile ? 0 : useTransform(smoothY, (v) => v * -8),
-  }}
->
-  <Model3D width={isMobile ? "280px" : "400px"} height={isMobile ? "280px" : "400px"} />
-</motion.div>
+        <MascotWithParallax smoothX={smoothX} smoothY={smoothY} isMobile={isMobile} />
 
         {/* Scroll indicator */}
         <motion.div
