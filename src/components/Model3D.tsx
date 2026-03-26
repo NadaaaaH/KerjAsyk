@@ -5,7 +5,7 @@ import { useScroll } from "framer-motion";
 import * as THREE from "three";
 
 const Model = ({ scrollY }: { scrollY: any }) => {
-  const { scene } = useGLTF("/src/assets/character-sitting.glb");
+  const { scene } = useGLTF("/assets/character-sitting.glb");
   const ref = useRef<THREE.Group>(null);
 
   useFrame((state) => {
@@ -64,6 +64,6 @@ const Model3D = ({
   );
 };
 
-useGLTF.preload("/src/assets/character-sitting.glb");
+useGLTF.preload("/assets/character-sitting.glb");
 
 export default Model3D;

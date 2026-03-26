@@ -6,7 +6,7 @@ import * as THREE from "three";
 import { clone } from "three/examples/jsm/utils/SkeletonUtils.js";
 
 const Mascot = ({ scrollY }: { scrollY: any }) => {
-  const { scene } = useGLTF("/guide-character.glb");
+  const { scene } = useGLTF("/assets/guide-character.glb");
   const clonedScene = clone(scene);
   const ref = useRef<THREE.Group>(null);
 
@@ -61,6 +61,6 @@ const MascotGuide = ({
   );
 };
 
-useGLTF.preload("/guide-character.glb");
+useGLTF.preload("/assets/guide-character.glb");
 
 export default MascotGuide;
