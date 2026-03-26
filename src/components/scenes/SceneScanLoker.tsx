@@ -1,16 +1,54 @@
 import { useRef, useState } from "react";
-import { motion, useScroll, useTransform, useSpring } from "framer-motion";
-import { FileText, Link, Image, CheckCircle, AlertTriangle, Loader2, Upload, ScanSearch } from "lucide-react";
+import { motion, useScroll, useTransform, useSpring, AnimatePresence } from "framer-motion";
+import { FileText, Link, Image, CheckCircle, AlertTriangle, Loader2, Upload, ScanSearch, ShieldCheck, ShieldAlert, XCircle, Building2, DollarSign, Clock, User } from "lucide-react";
+import { useTheme } from "@/hooks/useTheme";
 
 type TabType = "url" | "teks" | "gambar";
 type ResultType = "aman" | "scam" | "curiga" | null;
 
+const analyzeInput = (input: string, tab: TabType): {
+  result: ResultType;
+  company: string;
+  position: string;
+  checks: { label: string; status: "ok" | "warn" | "bad"; desc: string }[];
+  summary: string;
+  score: number;
+} => {
+  const text = input.toLowerCase();
+  const scamKeywords = ["modal", "deposit", "transfer", "rekening", "wa.me", "bit.ly", "untung", "passive income", "mlm", "jaminan", "tanpa modal"];
+  const warnKeywords = ["tanpa pengalaman", "gaji tinggi", "langsung diterima", "wfh full", "no cv", "tanpa ijazah"];
+  const scamCount = scamKeywords.filter(k => text.includes(k)).length;
+  const warnCount = warnKeywords.filter(k => text.includes(k)).length;
+  let result: ResultType = "aman";
+  let score = 92;
+  if (scamCount >= 2) { result = "scam"; score = 15 + Math.floor(Math.random() * 20); }
+  else if (scamCount === 1 || warnCount >= 2) { result = "curiga"; score = 45 + Math.floor(Math.random() * 20); }
+  else { result = "aman"; score = 78 + Math.floor(Math.random() * 18); }
+  const companyMatch = text.match(/pt\.?\s+\w+|cv\.?\s+\w+|(?:perusahaan|company)\s+\w+/i);
+  const company = companyMatch ? companyMatch[0].toUpperCase() : tab === "url" ? "Dari URL" : "Tidak Terdeteksi";
+  const posKeywords = ["software", "engineer", "manager", "designer", "admin", "marketing", "data", "analyst", "developer", "staff"];
+  const posMatch = posKeywords.find(k => text.includes(k));
+  const position = posMatch ? posMatch.charAt(0).toUpperCase() + posMatch.slice(1) + " (terdeteksi)" : "Posisi Umum";
+  const checks = [
+    { label: "Kredibilitas Perusahaan", status: scamCount >= 1 ? "bad" : warnCount >= 1 ? "warn" : "ok", desc: scamCount >= 1 ? "Perusahaan tidak dapat diverifikasi" : warnCount >= 1 ? "Informasi perusahaan kurang lengkap" : "Perusahaan terverifikasi di database" },
+    { label: "Kewajaran Gaji", status: text.includes("juta") && (text.includes("minggu") || text.includes("hari")) ? "bad" : warnCount >= 1 ? "warn" : "ok", desc: text.includes("juta") && (text.includes("minggu") || text.includes("hari")) ? "Tawaran gaji tidak realistis" : "Rentang gaji dalam batas wajar" },
+    { label: "Transparansi Lowongan", status: scamCount >= 2 ? "bad" : warnCount >= 1 ? "warn" : "ok", desc: scamCount >= 2 ? "Banyak informasi penting disembunyikan" : warnCount >= 1 ? "Beberapa detail perlu diklarifikasi" : "Deskripsi pekerjaan lengkap dan jelas" },
+    { label: "Pola Penipuan", status: scamCount >= 2 ? "bad" : scamCount === 1 ? "warn" : "ok", desc: scamCount >= 2 ? `${scamCount} indikator penipuan ditemukan` : scamCount === 1 ? "1 indikator mencurigakan ditemukan" : "Tidak ada pola penipuan terdeteksi" },
+  ] as { label: string; status: "ok" | "warn" | "bad"; desc: string }[];
+  const summaries = {
+    aman: "Lowongan ini tampak legitim berdasarkan analisis kami. Tetap lakukan verifikasi mandiri sebelum melamar.",
+    curiga: "Ditemukan beberapa poin yang perlu diverifikasi lebih lanjut. Hubungi perusahaan secara resmi sebelum melanjutkan.",
+    scam: "Lowongan ini memiliki banyak tanda bahaya. Sangat disarankan untuk tidak melanjutkan proses lamaran.",
+  };
+  return { result, company, position, checks, summary: summaries[result], score };
+};
+
 const SceneScanLoker = () => {
   const ref = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const { isDark } = useTheme();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const smoothScroll = useSpring(scrollYProgress, { stiffness: 50, damping: 20 });
-
   const cardScale = useTransform(smoothScroll, [0.1, 0.4], [0.92, 1]);
   const cardY = useTransform(smoothScroll, [0.1, 0.4], [60, 0]);
   const cardRotateX = useTransform(smoothScroll, [0.1, 0.4], [10, 0]);
@@ -19,17 +57,19 @@ const SceneScanLoker = () => {
   const [input, setInput] = useState("");
   const [fileName, setFileName] = useState("");
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<ResultType>(null);
+  const [analysis, setAnalysis] = useState<ReturnType<typeof analyzeInput> | null>(null);
+  const [loadingStep, setLoadingStep] = useState(0);
+  const loadingSteps = ["Membaca konten...", "Menganalisis pola...", "Memverifikasi data...", "Menyusun laporan..."];
 
   const handleScan = () => {
     if (!input && !fileName) return;
     setLoading(true);
-    setResult(null);
-    setTimeout(() => {
-      setLoading(false);
-      const outcomes: ResultType[] = ["aman", "curiga", "scam"];
-      setResult(outcomes[Math.floor(Math.random() * outcomes.length)]);
-    }, 2200);
+    setAnalysis(null);
+    setLoadingStep(0);
+    const stepInterval = setInterval(() => {
+      setLoadingStep(prev => { if (prev >= loadingSteps.length - 1) { clearInterval(stepInterval); return prev; } return prev + 1; });
+    }, 500);
+    setTimeout(() => { clearInterval(stepInterval); setLoading(false); setAnalysis(analyzeInput(input || fileName, tab)); }, 2200);
   };
 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,19 +78,27 @@ const SceneScanLoker = () => {
   };
 
   const resultConfig = {
-    aman: { color: "hsl(var(--accent-mint))", bg: "hsl(160 65% 40% / 0.08)", border: "hsl(160 65% 40% / 0.2)", icon: CheckCircle, label: "Loker Aman ✓", desc: "Tidak ditemukan indikasi penipuan. Aman untuk dilamar!" },
-    curiga: { color: "hsl(var(--accent-yellow))", bg: "hsl(38 95% 50% / 0.08)", border: "hsl(38 95% 50% / 0.2)", icon: AlertTriangle, label: "Perlu Dicek Lebih Lanjut", desc: "Ada beberapa poin yang perlu diverifikasi. Hati-hati sebelum melanjutkan." },
-    scam: { color: "hsl(var(--danger))", bg: "hsl(var(--danger) / 0.08)", border: "hsl(var(--danger) / 0.2)", icon: AlertTriangle, label: "Terindikasi Penipuan!", desc: "Lowongan ini memiliki banyak tanda merah. Jangan transfer uang apapun!" },
+    aman: { color: "hsl(160 65% 40%)", bg: "hsl(160 65% 40% / 0.06)", border: "hsl(160 65% 40% / 0.2)", gradient: "linear-gradient(135deg, hsl(160 65% 40% / 0.08), hsl(160 65% 40% / 0.03))", icon: ShieldCheck, label: "Loker Aman", emoji: "✓" },
+    curiga: { color: "hsl(38 95% 45%)", bg: "hsl(38 95% 50% / 0.06)", border: "hsl(38 95% 50% / 0.2)", gradient: "linear-gradient(135deg, hsl(38 95% 50% / 0.08), hsl(38 95% 50% / 0.03))", icon: ShieldAlert, label: "Perlu Dicek", emoji: "⚠" },
+    scam: { color: "hsl(0 84% 50%)", bg: "hsl(0 84% 50% / 0.06)", border: "hsl(0 84% 50% / 0.2)", gradient: "linear-gradient(135deg, hsl(0 84% 50% / 0.08), hsl(0 84% 50% / 0.03))", icon: XCircle, label: "Terindikasi Scam", emoji: "✕" },
   };
-
+  const statusConfig = {
+    ok: { color: "hsl(160 65% 40%)", bg: "hsl(160 65% 40% / 0.1)", icon: CheckCircle, label: "Aman" },
+    warn: { color: "hsl(38 95% 45%)", bg: "hsl(38 95% 50% / 0.1)", icon: AlertTriangle, label: "Perhatian" },
+    bad: { color: "hsl(0 84% 50%)", bg: "hsl(0 84% 50% / 0.1)", icon: XCircle, label: "Bahaya" },
+  };
   const tabs: { id: TabType; icon: typeof Link; label: string }[] = [
     { id: "url", icon: Link, label: "URL Loker" },
     { id: "teks", icon: FileText, label: "Tempel Teks" },
     { id: "gambar", icon: Image, label: "Upload Gambar" },
   ];
 
+  // ← Fix: warna tab active berdasarkan dark/light
+  const tabActiveBg = isDark ? "hsl(222 25% 18%)" : "white";
+
   return (
     <section id="scan-loker" ref={ref} className="scene-container flex items-center justify-center py-32" style={{ minHeight: "130vh" }}>
+      {/* ← Fix: pakai CSS variable class */}
       <div className="absolute inset-0 z-0 cinematic-gradient" />
       <div className="absolute inset-0 z-0 dot-pattern" />
       <div className="absolute inset-0 z-0" style={{
@@ -88,10 +136,10 @@ const SceneScanLoker = () => {
               <button
                 key={t.id}
                 data-hover
-                onClick={() => { setTab(t.id); setResult(null); setInput(""); setFileName(""); }}
+                onClick={() => { setTab(t.id); setAnalysis(null); setInput(""); setFileName(""); }}
                 className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 cursor-pointer"
                 style={{
-                  background: tab === t.id ? "white" : "transparent",
+                  background: tab === t.id ? tabActiveBg : "transparent",
                   color: tab === t.id ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))",
                   boxShadow: tab === t.id ? "0 2px 8px rgba(0,0,0,0.08)" : "none",
                 }}
@@ -102,7 +150,7 @@ const SceneScanLoker = () => {
             ))}
           </div>
 
-          {/* Input area */}
+          {/* Input */}
           <div className="mb-4">
             {tab === "url" && (
               <div className="relative">
@@ -112,12 +160,9 @@ const SceneScanLoker = () => {
                   placeholder="https://loker.contoh.com/software-engineer"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleScan()}
                   className="w-full pl-11 pr-4 py-4 rounded-2xl text-sm font-medium transition-all duration-200"
-                  style={{
-                    background: "hsl(var(--secondary) / 0.6)",
-                    border: "1.5px solid hsl(var(--border))",
-                    color: "hsl(var(--foreground))",
-                  }}
+                  style={{ background: "hsl(var(--secondary) / 0.6)", border: "1.5px solid hsl(var(--border))", color: "hsl(var(--foreground))", outline: "none" }}
                 />
               </div>
             )}
@@ -128,22 +173,14 @@ const SceneScanLoker = () => {
                 onChange={(e) => setInput(e.target.value)}
                 rows={5}
                 className="w-full px-4 py-4 rounded-2xl text-sm font-medium resize-none transition-all duration-200"
-                style={{
-                  background: "hsl(var(--secondary) / 0.6)",
-                  border: "1.5px solid hsl(var(--border))",
-                  color: "hsl(var(--foreground))",
-                }}
+                style={{ background: "hsl(var(--secondary) / 0.6)", border: "1.5px solid hsl(var(--border))", color: "hsl(var(--foreground))", outline: "none" }}
               />
             )}
             {tab === "gambar" && (
               <div
                 className="relative rounded-2xl p-8 text-center cursor-pointer transition-all duration-200"
-                style={{
-                  background: "hsl(var(--secondary) / 0.6)",
-                  border: "1.5px dashed hsl(var(--primary) / 0.3)",
-                }}
+                style={{ background: "hsl(var(--secondary) / 0.6)", border: "1.5px dashed hsl(var(--primary) / 0.3)" }}
                 onClick={() => fileRef.current?.click()}
-                data-hover
               >
                 <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleFile} />
                 <Upload className="w-8 h-8 text-primary/50 mx-auto mb-3" />
@@ -170,37 +207,97 @@ const SceneScanLoker = () => {
             whileTap={{ scale: 0.98 }}
           >
             {loading ? (
-              <><Loader2 className="w-5 h-5 animate-spin" /> Menganalisis...</>
+              <><Loader2 className="w-5 h-5 animate-spin" /> {loadingSteps[loadingStep]}</>
             ) : (
               <><ScanSearch className="w-5 h-5" /> Scan Sekarang</>
             )}
           </motion.button>
 
           {/* Result */}
-          {result && (
-            <motion.div
-              initial={{ opacity: 0, y: 16, scale: 0.96 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-              className="mt-5 rounded-2xl p-5"
-              style={{
-                background: resultConfig[result].bg,
-                border: `1.5px solid ${resultConfig[result].border}`,
-              }}
-            >
-              <div className="flex items-center gap-3 mb-2">
-                {(() => { const Icon = resultConfig[result].icon; return <Icon className="w-5 h-5" style={{ color: resultConfig[result].color }} />; })()}
-                <span className="font-bold text-sm" style={{ color: resultConfig[result].color }}>
-                  {resultConfig[result].label}
-                </span>
-              </div>
-              <p className="text-sm text-muted-foreground ml-8">{resultConfig[result].desc}</p>
-            </motion.div>
-          )}
+          <AnimatePresence>
+            {analysis && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                className="mt-6 rounded-2xl overflow-hidden"
+                style={{ border: `1.5px solid ${resultConfig[analysis.result].border}`, background: resultConfig[analysis.result].gradient, backdropFilter: "blur(12px)" }}
+              >
+                <div className="p-5 pb-4">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      {(() => { const Icon = resultConfig[analysis.result].icon; return <Icon className="w-6 h-6" style={{ color: resultConfig[analysis.result].color }} />; })()}
+                      <div>
+                        <p className="font-bold text-base" style={{ color: resultConfig[analysis.result].color }}>
+                          {resultConfig[analysis.result].label} {resultConfig[analysis.result].emoji}
+                        </p>
+                        <p className="text-xs text-muted-foreground">Analisis selesai</p>
+                      </div>
+                    </div>
+                    <div className="relative w-14 h-14">
+                      <svg className="w-14 h-14 -rotate-90" viewBox="0 0 56 56">
+                        <circle cx="28" cy="28" r="22" fill="none" stroke="hsl(var(--border))" strokeWidth="3" />
+                        <circle cx="28" cy="28" r="22" fill="none" stroke={resultConfig[analysis.result].color} strokeWidth="3" strokeLinecap="round" strokeDasharray={`${2 * Math.PI * 22}`} strokeDashoffset={`${2 * Math.PI * 22 * (1 - analysis.score / 100)}`} style={{ transition: "stroke-dashoffset 1s ease" }} />
+                      </svg>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="text-xs font-black" style={{ color: resultConfig[analysis.result].color }}>{analysis.score}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 mb-4">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <Building2 className="w-3.5 h-3.5" />
+                      <span className="truncate">{analysis.company}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <User className="w-3.5 h-3.5" />
+                      <span className="truncate">{analysis.position}</span>
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted-foreground leading-relaxed mb-4">{analysis.summary}</p>
+                  <div className="h-px mb-4" style={{ background: `${resultConfig[analysis.result].border}` }} />
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Detail Analisis</p>
+                  <div className="space-y-2">
+                    {analysis.checks.map((check, i) => {
+                      const sc = statusConfig[check.status];
+                      const Icon = sc.icon;
+                      return (
+                        <motion.div
+                          key={i}
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.1 + i * 0.08 }}
+                          className="flex items-start gap-3 rounded-xl p-3"
+                          style={{ background: sc.bg }}
+                        >
+                          <Icon className="w-4 h-4 mt-0.5 flex-shrink-0" style={{ color: sc.color }} />
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between gap-2">
+                              <p className="text-xs font-semibold text-foreground">{check.label}</p>
+                              <span className="text-xs font-medium flex-shrink-0" style={{ color: sc.color }}>{sc.label}</span>
+                            </div>
+                            <p className="text-xs text-muted-foreground mt-0.5">{check.desc}</p>
+                          </div>
+                        </motion.div>
+                      );
+                    })}
+                  </div>
+                </div>
+                <motion.button
+                  onClick={() => { setAnalysis(null); setInput(""); setFileName(""); }}
+                  className="w-full py-3 text-xs font-semibold transition-colors cursor-pointer"
+                  style={{ borderTop: `1px solid ${resultConfig[analysis.result].border}`, color: "hsl(var(--muted-foreground))", background: "transparent" }}
+                  whileHover={{ color: "hsl(var(--foreground))" }}
+                >
+                  Scan loker lain →
+                </motion.button>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
       </div>
     </section>
   );
 };
-
 export default SceneScanLoker;

@@ -10,18 +10,18 @@ const stats = [
 ];
 
 const companies = [
-  { name: "Gojek", logo: "/src/assets/logos/gojek.png" },
-  { name: "Tokopedia", logo: "/src/assets/logos/tokopedia.png" },
-  { name: "Shopee", logo: "/src/assets/logos/shopee.png" },
-  { name: "Bank BCA", logo: "/src/assets/logos/bca.png" },
-  { name: "Telkom", logo: "/src/assets/logos/telkom.png" },
-  { name: "Unilever", logo: "/src/assets/logos/unilever.png" },
-  { name: "Traveloka", logo: "/src/assets/logos/traveloka.png" },
-  { name: "Bukalapak", logo: "/src/assets/logos/bukalapak.png" },
-  { name: "OVO", logo: "/src/assets/logos/ovo.png" },
-  { name: "Grab", logo: "/src/assets/logos/grab.png" },
-  { name: "Dana", logo: "/src/assets/logos/dana.png" },
-  { name: "GoTo", logo: "/src/assets/logos/goto.png" },
+  { name: "Gojek", logo: "/logos/gojek.png" },
+  { name: "Tokopedia", logo: "/logos/tokopedia.png" },
+  { name: "Shopee", logo: "/logos/shopee.png" },
+  { name: "Bank BCA", logo: "/logos/bca.png" },
+  { name: "Telkom", logo: "/logos/telkom.png" },
+  { name: "Unilever", logo: "/logos/unilever.png" },
+  { name: "Traveloka", logo: "/logos/traveloka.png" },
+  { name: "Bukalapak", logo: "/logos/bukalapak.png" },
+  { name: "OVO", logo: "/logos/ovo.png" },
+  { name: "Grab", logo: "/logos/grab.png" },
+  { name: "Dana", logo: "/logos/dana.png" },
+  { name: "GoTo", logo: "/logos/goto.png" },
 ];
 
 const infiniteCompanies = [...companies, ...companies];

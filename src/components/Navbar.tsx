@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { useTheme } from "@/hooks/useTheme";
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
+  const { isDark } = useTheme();
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 40);
@@ -14,11 +17,28 @@ const Navbar = () => {
   }, []);
 
   const navLinks = [
-    { label: "Scan Loker", href: "/scan-loker", external: false },
-    { label: "Cek Gaji", href: "/cek-gaji", external: false },
-    { label: "Cara Kerja", href: "/cara-kerja", external: false },
-    { label: "Tentang", href: "/tentang", external: false },
+    { label: "Scan Loker", href: "/scan-loker" },
+    { label: "Cek Gaji", href: "/cek-gaji" },
+    { label: "Cara Kerja", href: "/cara-kerja" },
+    { label: "Tentang", href: "/tentang" },
   ];
+
+  // Warna navbar berdasarkan dark/light + scroll
+  const navBg = isDark
+    ? scrolled ? "rgba(14, 20, 36, 0.92)" : "rgba(14, 20, 36, 0.6)"
+    : scrolled ? "rgba(255, 255, 255, 0.85)" : "rgba(255, 255, 255, 0.5)";
+
+  const navShadow = isDark
+    ? scrolled
+      ? "0 4px 24px rgba(0,0,0,0.3), 0 0 0 1px rgba(99,158,255,0.08)"
+      : "0 2px 12px rgba(0,0,0,0.2), 0 0 0 1px rgba(99,158,255,0.06)"
+    : scrolled
+      ? "0 4px 24px rgba(30,64,175,0.08), 0 0 0 1px rgba(30,64,175,0.08)"
+      : "0 2px 12px rgba(30,64,175,0.04), 0 0 0 1px rgba(30,64,175,0.06)";
+
+  const mobileBg = isDark
+    ? "rgba(14, 20, 36, 0.95)"
+    : "rgba(255, 255, 255, 0.92)";
 
   return (
     <motion.nav
@@ -29,12 +49,7 @@ const Navbar = () => {
     >
       <motion.div
         className="max-w-5xl mx-auto rounded-2xl px-5 py-3 flex items-center justify-between"
-        animate={{
-          background: scrolled ? "rgba(255,255,255,0.85)" : "rgba(255,255,255,0.5)",
-          boxShadow: scrolled
-            ? "0 4px 24px rgba(30,64,175,0.08), 0 0 0 1px rgba(30,64,175,0.08)"
-            : "0 2px 12px rgba(30,64,175,0.04), 0 0 0 1px rgba(30,64,175,0.06)",
-        }}
+        animate={{ background: navBg, boxShadow: navShadow }}
         transition={{ duration: 0.3 }}
         style={{ backdropFilter: "blur(20px) saturate(180%)", WebkitBackdropFilter: "blur(20px) saturate(180%)" }}
       >
@@ -49,24 +64,35 @@ const Navbar = () => {
         {/* Links desktop */}
         <div className="hidden md:flex items-center gap-1">
           {navLinks.map((link) => {
-            const isActive = location.pathname === link.href || (location.pathname + location.hash) === link.href;
+            const isActive = location.pathname === link.href;
             return (
-              <motion.div key={link.label}>
-                <Link
-                  to={link.href}
-                  data-hover
-                  className="px-4 py-2 rounded-xl text-sm font-medium no-underline block transition-all duration-300 hover:bg-black/5 hover:text-foreground"
-                  style={{ color: isActive ? "hsl(217 91% 50%)" : "hsl(var(--muted-foreground))" }}
-                >
-                  {link.label}
-                </Link>
-              </motion.div>
+              <Link
+                key={link.label}
+                to={link.href}
+                data-hover
+                className="px-4 py-2 rounded-xl text-sm font-medium no-underline block transition-all duration-300"
+                style={{
+                  color: isActive ? "hsl(217 91% 50%)" : "hsl(var(--muted-foreground))",
+                  background: isActive
+                    ? isDark ? "hsl(217 91% 50% / 0.12)" : "hsl(217 91% 50% / 0.08)"
+                    : "transparent",
+                }}
+                onMouseEnter={(e) => {
+                  if (!isActive) (e.currentTarget as HTMLElement).style.background = isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.05)";
+                }}
+                onMouseLeave={(e) => {
+                  if (!isActive) (e.currentTarget as HTMLElement).style.background = "transparent";
+                }}
+              >
+                {link.label}
+              </Link>
             );
           })}
         </div>
 
-        {/* CTA */}
-        <div className="hidden md:block">
+        {/* Right side: Toggle + CTA */}
+        <div className="hidden md:flex items-center gap-3">
+          <ThemeToggle />
           <Link to="/scan-loker" data-hover className="no-underline">
             <motion.span
               className="px-5 py-2.5 rounded-xl text-sm font-semibold text-white inline-block"
@@ -82,25 +108,34 @@ const Navbar = () => {
           </Link>
         </div>
 
-        {/* Hamburger */}
-        <button className="md:hidden flex flex-col gap-1.5 p-2" onClick={() => setMenuOpen(!menuOpen)} data-hover>
-          <motion.div className="w-5 h-0.5 rounded-full bg-foreground"
-            animate={{ rotate: menuOpen ? 45 : 0, y: menuOpen ? 8 : 0 }} transition={{ duration: 0.2 }} />
-          <motion.div className="w-5 h-0.5 rounded-full bg-foreground"
-            animate={{ opacity: menuOpen ? 0 : 1 }} transition={{ duration: 0.2 }} />
-          <motion.div className="w-5 h-0.5 rounded-full bg-foreground"
-            animate={{ rotate: menuOpen ? -45 : 0, y: menuOpen ? -8 : 0 }} transition={{ duration: 0.2 }} />
-        </button>
+        {/* Mobile: Toggle + Hamburger */}
+        <div className="md:hidden flex items-center gap-2">
+          <ThemeToggle />
+          <button
+            className="flex flex-col gap-1.5 p-2"
+            onClick={() => setMenuOpen(!menuOpen)}
+            data-hover
+          >
+            <motion.div className="w-5 h-0.5 rounded-full bg-foreground"
+              animate={{ rotate: menuOpen ? 45 : 0, y: menuOpen ? 8 : 0 }} transition={{ duration: 0.2 }} />
+            <motion.div className="w-5 h-0.5 rounded-full bg-foreground"
+              animate={{ opacity: menuOpen ? 0 : 1 }} transition={{ duration: 0.2 }} />
+            <motion.div className="w-5 h-0.5 rounded-full bg-foreground"
+              animate={{ rotate: menuOpen ? -45 : 0, y: menuOpen ? -8 : 0 }} transition={{ duration: 0.2 }} />
+          </button>
+        </div>
       </motion.div>
 
       {/* Mobile menu */}
       <motion.div
         className="md:hidden mx-4 mt-2 rounded-2xl overflow-hidden"
         style={{
-          background: "rgba(255,255,255,0.92)",
+          background: mobileBg,
           backdropFilter: "blur(20px)",
           WebkitBackdropFilter: "blur(20px)",
-          boxShadow: "0 8px 32px rgba(30,64,175,0.1), 0 0 0 1px rgba(30,64,175,0.08)",
+          boxShadow: isDark
+            ? "0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(99,158,255,0.08)"
+            : "0 8px 32px rgba(30,64,175,0.1), 0 0 0 1px rgba(30,64,175,0.08)",
         }}
         initial={false}
         animate={{ height: menuOpen ? "auto" : 0, opacity: menuOpen ? 1 : 0 }}
@@ -108,16 +143,18 @@ const Navbar = () => {
       >
         <div className="p-4 flex flex-col gap-1">
           {navLinks.map((link) => {
-            const isActive = location.pathname === link.href || (location.pathname + location.hash) === link.href;
+            const isActive = location.pathname === link.href;
             return (
               <Link
                 key={link.label}
                 to={link.href}
                 onClick={() => setMenuOpen(false)}
-                className="px-4 py-3 rounded-xl text-sm font-medium no-underline transition-colors active:scale-95 hover:bg-black/5"
-                style={{ 
-                  background: isActive ? "hsl(217 91% 95%)" : "hsl(214 32% 95% / 0.6)",
-                  color: isActive ? "hsl(217 91% 50%)" : "hsl(var(--foreground))"
+                className="px-4 py-3 rounded-xl text-sm font-medium no-underline transition-colors active:scale-95"
+                style={{
+                  background: isActive
+                    ? isDark ? "hsl(217 91% 50% / 0.15)" : "hsl(217 91% 95%)"
+                    : isDark ? "hsl(220 20% 16% / 0.6)" : "hsl(214 32% 95% / 0.6)",
+                  color: isActive ? "hsl(217 91% 55%)" : "hsl(var(--foreground))",
                 }}
               >
                 {link.label}

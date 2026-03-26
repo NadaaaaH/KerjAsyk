@@ -17,7 +17,6 @@ const SceneFinalCTA = () => {
   const mouseY = useMotionValue(0);
   const smoothX = useSpring(mouseX, { stiffness: 40, damping: 15 });
   const smoothY = useSpring(mouseY, { stiffness: 40, damping: 15 });
-
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const mascotScale = useTransform(scrollYProgress, [0.1, 0.5], [0.8, 1]);
   const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "-8%"]);
@@ -36,30 +35,16 @@ const SceneFinalCTA = () => {
 
   return (
     <section ref={ref} className="relative w-full overflow-hidden flex items-center justify-center pt-32 pb-16">
+      {/* ← Fix: pakai CSS variable gradient */}
       <motion.div className="absolute inset-0 z-0" style={{ y: bgY }}>
-        <div className="absolute inset-0" style={{
-          background: "linear-gradient(180deg, hsl(210 80% 97%) 0%, hsl(214 90% 95%) 50%, hsl(210 80% 97%) 100%)",
-        }} />
+        <div className="absolute inset-0 cinematic-gradient" />
         <div className="absolute inset-0 dot-pattern" />
-        <div className="absolute inset-0" style={{
-          background: "radial-gradient(ellipse at 50% 70%, hsl(217 91% 50% / 0.08), transparent 55%)",
-        }} />
+        <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at 50% 70%, hsl(217 91% 50% / 0.08), transparent 55%)" }} />
       </motion.div>
 
       <div className="relative z-10 max-w-4xl mx-auto px-6 flex flex-col items-center text-center w-full">
-        {/* Mascot tengah */}
-        <motion.div
-          style={{
-            scale: mascotScale,
-            x: isMobile ? 0 : mascotX,
-            y: isMobile ? 0 : mascotY,
-          }}
-          className="mb-4"
-        >
-          <MascotGuide
-            width={isMobile ? "260px" : "380px"}
-            height={isMobile ? "260px" : "400px"}
-          />
+        <motion.div style={{ scale: mascotScale, x: isMobile ? 0 : mascotX, y: isMobile ? 0 : mascotY }} className="mb-4">
+          <MascotGuide width={isMobile ? "260px" : "380px"} height={isMobile ? "260px" : "400px"} />
         </motion.div>
 
         <motion.h2
@@ -118,20 +103,12 @@ const SceneFinalCTA = () => {
         </motion.div>
 
         {/* Main CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.5 }}
-        >
+        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.5 }}>
           <motion.a
             href="#scan-loker"
             className="relative inline-block px-12 py-5 rounded-full text-lg font-bold text-white overflow-hidden cursor-pointer no-underline"
             data-hover
-            style={{
-              background: "linear-gradient(135deg, hsl(var(--primary)), hsl(217 91% 42%))",
-              boxShadow: "0 8px 40px hsl(var(--primary) / 0.3)",
-            }}
+            style={{ background: "linear-gradient(135deg, hsl(var(--primary)), hsl(217 91% 42%))", boxShadow: "0 8px 40px hsl(var(--primary) / 0.3)" }}
             whileHover={{ y: -4, boxShadow: "0 20px 60px hsl(var(--primary) / 0.4)" }}
             whileTap={{ scale: 0.97 }}
           >
@@ -144,11 +121,8 @@ const SceneFinalCTA = () => {
             <span className="relative z-10">Mulai Sekarang — Gratis</span>
           </motion.a>
         </motion.div>
-
-        {/* Copyright notice removed to avoid redundancy with the footer directly below */}
       </div>
     </section>
   );
 };
-
 export default SceneFinalCTA;

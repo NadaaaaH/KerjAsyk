@@ -37,9 +37,8 @@ const SceneAdvice = () => {
 
   return (
     <section ref={ref} className="scene-container flex items-center justify-center py-32" style={{ minHeight: "130vh" }}>
-      <div className="absolute inset-0 z-0" style={{
-        background: "linear-gradient(180deg, hsl(210 80% 97%) 0%, hsl(160 60% 96%) 50%, hsl(210 80% 97%) 100%)",
-      }} />
+      {/* ← Fix: pakai CSS variable gradient */}
+      <div className="absolute inset-0 z-0 hope-gradient" />
       <div className="absolute inset-0 z-0 dot-pattern" />
       <div className="absolute inset-0 z-0" style={{
         background: "radial-gradient(ellipse at 50% 60%, hsl(160 65% 40% / 0.07), transparent 60%)",
@@ -53,8 +52,7 @@ const SceneAdvice = () => {
 
       <motion.div className="relative z-10 max-w-5xl mx-auto px-6 w-full" style={{ y: parallaxY }}>
         <div className="flex flex-col md:flex-row items-center gap-12 md:gap-16 min-h-[400px]">
-
-          {/* Kiri: Maskot */}
+          {/* Maskot */}
           <motion.div
             className="flex-shrink-0"
             style={{
@@ -64,13 +62,10 @@ const SceneAdvice = () => {
               y: isMobile ? 0 : mascotY,
             }}
           >
-            <MascotGuide
-              width={isMobile ? "240px" : "320px"}
-              height={isMobile ? "240px" : "340px"}
-            />
+            <MascotGuide width={isMobile ? "240px" : "320px"} height={isMobile ? "240px" : "340px"} />
           </motion.div>
 
-          {/* Kanan: Teks + tips */}
+          {/* Teks + tips */}
           <div className="flex-1">
             <motion.div
               initial={{ opacity: 0, y: 40 }}
@@ -88,8 +83,6 @@ const SceneAdvice = () => {
                 KerjaSyik hadir sebagai pelindungmu dari lowongan palsu.
               </p>
             </motion.div>
-
-            {/* Tips cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {tips.map((tip, i) => (
                 <motion.div
@@ -112,11 +105,9 @@ const SceneAdvice = () => {
               ))}
             </div>
           </div>
-
         </div>
       </motion.div>
     </section>
   );
 };
-
 export default SceneAdvice;

@@ -2,6 +2,8 @@ import { useRef, useEffect, useState } from "react";
 import { motion, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion";
 import Model3D from "@/components/Model3D";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { usePageReady } from "@/App";
+import { useTheme } from "@/hooks/useTheme";
 
 const floatingCards = [
   { text: "Gaji 20jt/minggu", x: 8, y: 20, delay: 0 },
@@ -15,14 +17,12 @@ const floatingCards = [
   { text: "WFH gaji dollar", x: 36, y: 40, delay: 0.4 },
   { text: "Tanpa ijazah 15jt", x: 54, y: 80, delay: 1.1 },
 ];
-
 const chatBubbles = [
   { text: "Kak mau kerja?", x: 6, y: 33, delay: 0.6 },
   { text: "Slot terbatas!", x: 83, y: 23, delay: 1.3 },
   { text: "DM aku ya kak", x: 16, y: 66, delay: 0.9 },
 ];
 
-// Komponen terpisah untuk tiap floating card agar hooks aman
 const FloatingCard = ({
   card, index, smoothX, smoothY, isMobile,
 }: {
@@ -34,17 +34,10 @@ const FloatingCard = ({
 }) => {
   const x = useTransform(smoothX, (v: number) => isMobile ? 0 : v * (6 + index * 1.5));
   const y = useTransform(smoothY, (v: number) => isMobile ? 0 : v * (6 + index * 1.5));
-
   return (
     <motion.div
       className="absolute glass-surface rounded-2xl px-4 py-2.5 text-xs font-medium select-none"
-      style={{
-        left: `${card.x}%`,
-        top: `${card.y}%`,
-        color: "hsl(var(--muted-foreground))",
-        x,
-        y,
-      }}
+      style={{ left: `${card.x}%`, top: `${card.y}%`, color: "hsl(var(--muted-foreground))", x, y }}
       animate={{ y: [0, -10 - index * 1.5, 0], rotate: [0, index % 2 === 0 ? 1.2 : -1.2, 0] }}
       transition={{ duration: 6 + index * 0.4, repeat: Infinity, ease: "easeInOut", delay: card.delay }}
     >
@@ -53,23 +46,22 @@ const FloatingCard = ({
   );
 };
 
-// Komponen terpisah untuk karakter tengah agar hooks aman
 const MascotWithParallax = ({
-  smoothX, smoothY, isMobile,
+  smoothX, smoothY, isMobile, pageReady,
 }: {
   smoothX: any;
   smoothY: any;
   isMobile: boolean;
+  pageReady: boolean;
 }) => {
   const x = useTransform(smoothX, (v: number) => isMobile ? 0 : v * -12);
   const y = useTransform(smoothY, (v: number) => isMobile ? 0 : v * -8);
-
   return (
     <motion.div
-      className="relative mt-"
-      initial={{ opacity: 0, scale: 0.9, y: 20 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
-      transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1], delay: 0.4 }}
+      className="relative"
+      initial={{ opacity: 0, y: 60, scale: 0.95 }}
+      animate={pageReady ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 60, scale: 0.95 }}
+      transition={{ duration: 1.0, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
       style={{ x, y }}
     >
       <Model3D width={isMobile ? "280px" : "400px"} height={isMobile ? "280px" : "400px"} />
@@ -80,6 +72,8 @@ const MascotWithParallax = ({
 const SceneIntro = () => {
   const ref = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
+  const pageReady = usePageReady();
+  const { isDark } = useTheme();
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const smoothX = useSpring(mouseX, { stiffness: 50, damping: 20 });
@@ -92,7 +86,6 @@ const SceneIntro = () => {
   const textOpacity = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
   const textY = useTransform(scrollYProgress, [0, 0.4], ["0%", "-28%"]);
   const zoom = useTransform(scrollYProgress, [0, 0.8], [1, 1.06]);
-  const [flickerOpacity, setFlickerOpacity] = useState(0.15);
 
   useEffect(() => {
     if (isMobile) return;
@@ -104,20 +97,11 @@ const SceneIntro = () => {
     return () => window.removeEventListener("mousemove", handler);
   }, [isMobile, mouseX, mouseY]);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setFlickerOpacity(0.1 + Math.random() * 0.12);
-    }, 200);
-    return () => clearInterval(interval);
-  }, []);
-
   return (
     <section ref={ref} className="scene-container flex items-center justify-center" style={{ minHeight: "140vh" }}>
-      {/* Background */}
+      {/* Background — pakai CSS variable gradient */}
       <motion.div className="absolute inset-0 z-0" style={{ y: bgY, scale: zoom }}>
-        <div className="absolute inset-0" style={{
-          background: "linear-gradient(180deg, hsl(210 80% 97%) 0%, hsl(214 90% 94%) 30%, hsl(200 70% 96%) 60%, hsl(210 60% 98%) 100%)",
-        }} />
+        <div className="absolute inset-0 cinematic-gradient" />
         <div className="absolute inset-0 dot-pattern" />
         <div className="absolute inset-0" style={{
           background: "radial-gradient(ellipse at 50% 30%, hsl(217 91% 50% / 0.08) 0%, transparent 65%)",
@@ -143,14 +127,7 @@ const SceneIntro = () => {
       {/* Floating cards */}
       <motion.div className="absolute inset-0 z-10 pointer-events-none" style={{ y: midY }}>
         {floatingCards.map((card, i) => (
-          <FloatingCard
-            key={i}
-            card={card}
-            index={i}
-            smoothX={smoothX}
-            smoothY={smoothY}
-            isMobile={isMobile}
-          />
+          <FloatingCard key={i} card={card} index={i} smoothX={smoothX} smoothY={smoothY} isMobile={isMobile} />
         ))}
         {chatBubbles.map((bubble, i) => (
           <motion.div key={`chat-${i}`}
@@ -164,7 +141,7 @@ const SceneIntro = () => {
         ))}
       </motion.div>
 
-      {/* Foreground */}
+      {/* Main content */}
       <motion.div
         className="relative z-20 flex flex-col items-center gap-6 px-6"
         style={{ scale: fgScale, y: fgY }}
@@ -172,15 +149,17 @@ const SceneIntro = () => {
         <motion.div style={{ opacity: textOpacity, y: textY }} className="text-center">
           <motion.p
             className="mb-4 text-sm font-semibold tracking-[0.2em] uppercase text-primary"
-            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            initial={{ opacity: 0, y: 40 }}
+            animate={pageReady ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0 }}
           >
             KerjaSyik
           </motion.p>
           <motion.h1
             className="text-display text-foreground mb-6"
-            initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
+            initial={{ opacity: 0, y: 50 }}
+            animate={pageReady ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
           >
             Cari kerja tak seharusnya
             <br />
@@ -188,14 +167,16 @@ const SceneIntro = () => {
           </motion.h1>
           <motion.p
             className="text-body-scene text-muted-foreground mx-auto mb-8"
-            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.5 }}
+            initial={{ opacity: 0, y: 40 }}
+            animate={pageReady ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
           >
             Deteksi penipuan. Bandingkan gaji. Melangkah pasti.
           </motion.p>
           <motion.div
-            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.7 }}
+            initial={{ opacity: 0, y: 40 }}
+            animate={pageReady ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.3 }}
             className="flex flex-col sm:flex-row items-center justify-center gap-3"
           >
             <motion.a
@@ -217,12 +198,14 @@ const SceneIntro = () => {
               />
               <span className="relative z-10">Mulai Scan Loker →</span>
             </motion.a>
+            {/* ← Fix: ganti "white" ke CSS variable */}
             <motion.a
               href="#cek-gaji"
               className="px-8 py-4 rounded-full text-base font-semibold cursor-pointer inline-block"
               data-hover
               style={{
-                background: "white", color: "hsl(var(--primary))",
+                background: isDark ? "hsl(222 25% 14%)" : "white",
+                color: "hsl(var(--primary))",
                 border: "1.5px solid hsl(217 91% 50% / 0.2)",
                 boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
               }}
@@ -234,27 +217,31 @@ const SceneIntro = () => {
           </motion.div>
         </motion.div>
 
-        {/* Karakter tengah */}
-        <MascotWithParallax smoothX={smoothX} smoothY={smoothY} isMobile={isMobile} />
+        <MascotWithParallax smoothX={smoothX} smoothY={smoothY} isMobile={isMobile} pageReady={pageReady} />
 
-        {/* Scroll indicator */}
         <motion.div
           className="absolute -bottom-20 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          initial={{ opacity: 0 }}
+          animate={pageReady ? { opacity: 1 } : { opacity: 0 }}
+          transition={{ duration: 0.6, delay: 0.6 }}
         >
-          <span className="text-xs font-medium text-muted-foreground/60">Scroll</span>
-          <div className="w-5 h-8 rounded-full border border-primary/20 flex items-start justify-center p-1">
-            <motion.div
-              className="w-1 h-1 rounded-full bg-primary/60"
-              animate={{ y: [0, 14, 0] }}
-              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-            />
-          </div>
+          <motion.div
+            animate={{ y: [0, 8, 0] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            className="flex flex-col items-center gap-2"
+          >
+            <span className="text-xs font-medium text-muted-foreground/60">Scroll</span>
+            <div className="w-5 h-8 rounded-full border border-primary/20 flex items-start justify-center p-1">
+              <motion.div
+                className="w-1 h-1 rounded-full bg-primary/60"
+                animate={{ y: [0, 14, 0] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              />
+            </div>
+          </motion.div>
         </motion.div>
       </motion.div>
     </section>
   );
 };
-
 export default SceneIntro;

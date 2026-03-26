@@ -5,13 +5,7 @@ interface SectionDividerProps {
   variant?: "wave" | "tilt" | "curve";
 }
 
-/**
- * SectionDivider — SVG pemisah antar scene.
- * Taruh di antara dua <section>.
- *
- * Contoh:
- *   <SectionDivider fromColor="#f0f6ff" toColor="#f0faf6" />
- */
+
 const SectionDivider = ({
   fromColor = "hsl(210,80%,97%)",
   toColor = "hsl(214,80%,95%)",
