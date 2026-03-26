@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 import { Upload, ScanSearch, ShieldCheck, CheckCircle2 } from "lucide-react";
 
 const steps = [
@@ -12,17 +12,16 @@ const steps = [
 const SceneDashboard = () => {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const smoothScroll = useSpring(scrollYProgress, { stiffness: 50, damping: 20 });
 
-  const dashRotateX = useTransform(scrollYProgress, [0.15, 0.5], [14, 0]);
-  const dashRotateY = useTransform(scrollYProgress, [0.15, 0.5], [-8, 0]);
-  const dashScale = useTransform(scrollYProgress, [0.15, 0.5], [0.88, 1]);
-  const dashY = useTransform(scrollYProgress, [0.1, 0.5], [60, 0]);
+  const dashRotateX = useTransform(smoothScroll, [0.15, 0.5], [14, 0]);
+  const dashRotateY = useTransform(smoothScroll, [0.15, 0.5], [-8, 0]);
+  const dashScale = useTransform(smoothScroll, [0.15, 0.5], [0.88, 1]);
+  const dashY = useTransform(smoothScroll, [0.1, 0.5], [60, 0]);
 
   return (
     <section ref={ref} className="scene-container flex items-center justify-center py-32" style={{ minHeight: "130vh" }}>
-      <div className="absolute inset-0 z-0" style={{
-        background: "linear-gradient(180deg, hsl(160 60% 96%) 0%, hsl(214 80% 96%) 50%, hsl(210 80% 97%) 100%)",
-      }} />
+      <div className="absolute inset-0 z-0 hope-gradient" />
       <div className="absolute inset-0 z-0 grid-pattern" />
       <div className="absolute inset-0 z-0" style={{
         background: "radial-gradient(ellipse at 50% 40%, hsl(217 91% 50% / 0.06), transparent 60%)",

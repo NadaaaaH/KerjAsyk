@@ -123,14 +123,18 @@ const SceneIntro = () => {
           background: "radial-gradient(ellipse at 50% 30%, hsl(217 91% 50% / 0.08) 0%, transparent 65%)",
         }} />
         <motion.div className="absolute rounded-full"
-          style={{ width: 500, height: 500, top: "-10%", right: "-10%",
-            background: "radial-gradient(circle, hsl(217 91% 70% / 0.12), transparent 70%)" }}
+          style={{
+            width: 500, height: 500, top: "-10%", right: "-10%",
+            background: "radial-gradient(circle, hsl(217 91% 70% / 0.12), transparent 70%)"
+          }}
           animate={{ scale: [1, 1.08, 1], x: [0, 20, 0] }}
           transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.div className="absolute rounded-full"
-          style={{ width: 400, height: 400, bottom: "5%", left: "-8%",
-            background: "radial-gradient(circle, hsl(160 65% 40% / 0.08), transparent 70%)" }}
+          style={{
+            width: 400, height: 400, bottom: "5%", left: "-8%",
+            background: "radial-gradient(circle, hsl(160 65% 40% / 0.08), transparent 70%)"
+          }}
           animate={{ scale: [1, 1.1, 1], y: [0, -20, 0] }}
           transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 2 }}
         />

@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 import { AlertTriangle, Ban, Skull, CircleAlert } from "lucide-react";
 
 const pileCards = [
@@ -14,16 +14,15 @@ const pileCards = [
 const SceneFalling = () => {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const smoothScroll = useSpring(scrollYProgress, { stiffness: 50, damping: 20 });
 
-  const pushZ = useTransform(scrollYProgress, [0.2, 0.7], [0.95, 1.06]);
-  const clutterY = useTransform(scrollYProgress, [0, 1], ["8%", "-12%"]);
-  const bgIntensity = useTransform(scrollYProgress, [0, 0.5, 1], [0.3, 1, 0.6]);
+  const pushZ = useTransform(smoothScroll, [0.2, 0.7], [0.95, 1.06]);
+  const clutterY = useTransform(smoothScroll, [0, 1], ["8%", "-12%"]);
+  const bgIntensity = useTransform(smoothScroll, [0, 0.5, 1], [0.3, 1, 0.6]);
 
   return (
     <section ref={ref} className="scene-container flex items-center justify-center py-32" style={{ minHeight: "120vh" }}>
-      <div className="absolute inset-0 z-0" style={{
-        background: "linear-gradient(180deg, hsl(210 80% 97%) 0%, hsl(0 70% 97%) 40%, hsl(0 65% 96%) 60%, hsl(210 80% 97%) 100%)",
-      }} />
+      <div className="absolute inset-0 z-0 danger-gradient" />
       <div className="absolute inset-0 z-0 grid-pattern" />
       <motion.div className="absolute inset-0 z-0" style={{
         opacity: bgIntensity,

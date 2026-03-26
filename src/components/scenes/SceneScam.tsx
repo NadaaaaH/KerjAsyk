@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 import { AlertTriangle, ShieldAlert, XCircle } from "lucide-react";
 
 const scamCards = [
@@ -11,16 +11,15 @@ const scamCards = [
 const SceneScam = () => {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const fgSpeed = useTransform(scrollYProgress, [0, 1], ["0%", "-15%"]);
-  const bgSpeed = useTransform(scrollYProgress, [0, 1], ["0%", "-5%"]);
-  const bgLayer = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0, 1, 1, 0]);
+  const smoothScroll = useSpring(scrollYProgress, { stiffness: 50, damping: 20 });
+  const fgSpeed = useTransform(smoothScroll, [0, 1], ["0%", "-15%"]);
+  const bgSpeed = useTransform(smoothScroll, [0, 1], ["0%", "-5%"]);
+  const bgLayer = useTransform(smoothScroll, [0, 0.3, 0.7, 1], [0, 1, 1, 0]);
 
   return (
     <section ref={ref} className="scene-container flex items-center justify-center py-32" style={{ minHeight: "130vh" }}>
       <motion.div className="absolute inset-0 z-0" style={{ y: bgSpeed }}>
-        <div className="absolute inset-0" style={{
-          background: "linear-gradient(180deg, hsl(210 80% 97%) 0%, hsl(0 60% 97%) 40%, hsl(0 50% 96%) 60%, hsl(210 80% 97%) 100%)",
-        }} />
+        <div className="absolute inset-0 danger-gradient" />
         <div className="absolute inset-0 dot-pattern" />
         <div className="absolute -left-32 top-1/4 w-96 h-96 rounded-full" style={{
           background: "radial-gradient(circle, hsl(0 84% 55% / 0.07), transparent 70%)",

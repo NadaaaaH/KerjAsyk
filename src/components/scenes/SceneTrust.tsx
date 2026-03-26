@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 import { Building2, Users, Award, Globe } from "lucide-react";
 
 const stats = [
@@ -29,13 +29,12 @@ const infiniteCompanies = [...companies, ...companies];
 const SceneTrust = () => {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const floatY = useTransform(scrollYProgress, [0, 1], ["5%", "-5%"]);
+  const smoothScroll = useSpring(scrollYProgress, { stiffness: 50, damping: 20 });
+  const floatY = useTransform(smoothScroll, [0, 1], ["5%", "-5%"]);
 
   return (
     <section ref={ref} className="scene-container flex items-center justify-center py-32" style={{ minHeight: "120vh" }}>
-      <div className="absolute inset-0 z-0" style={{
-        background: "linear-gradient(180deg, hsl(210 80% 97%) 0%, hsl(214 80% 95%) 50%, hsl(210 80% 97%) 100%)",
-      }} />
+      <div className="absolute inset-0 z-0 cinematic-gradient" />
       <div className="absolute inset-0 z-0 dot-pattern" />
       <div className="absolute inset-0 z-0 grid-pattern" style={{ opacity: 0.5 }} />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] rounded-full" style={{

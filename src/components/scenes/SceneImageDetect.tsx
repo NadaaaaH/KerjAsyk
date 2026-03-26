@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 
 const suspiciousAreas = [
   { label: "Gaji fantastis", x: 12, y: 22, w: 72, h: 11, delay: 0.3 },
@@ -11,17 +11,16 @@ const suspiciousAreas = [
 const SceneImageDetect = () => {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const smoothScroll = useSpring(scrollYProgress, { stiffness: 50, damping: 20 });
 
-  const imgScale = useTransform(scrollYProgress, [0.1, 0.4], [0.85, 1]);
-  const imgOpacity = useTransform(scrollYProgress, [0.1, 0.3], [0, 1]);
-  const imgRotateY = useTransform(scrollYProgress, [0.1, 0.4], [-12, 0]);
-  const imgRotateX = useTransform(scrollYProgress, [0.1, 0.4], [8, 0]);
+  const imgScale = useTransform(smoothScroll, [0.1, 0.4], [0.85, 1]);
+  const imgOpacity = useTransform(smoothScroll, [0.1, 0.3], [0, 1]);
+  const imgRotateY = useTransform(smoothScroll, [0.1, 0.4], [-12, 0]);
+  const imgRotateX = useTransform(smoothScroll, [0.1, 0.4], [8, 0]);
 
   return (
     <section ref={ref} className="scene-container flex items-center justify-center py-32" style={{ minHeight: "120vh" }}>
-      <div className="absolute inset-0 z-0" style={{
-        background: "linear-gradient(180deg, hsl(210 80% 97%) 0%, hsl(214 80% 96%) 50%, hsl(210 80% 97%) 100%)",
-      }} />
+      <div className="absolute inset-0 z-0 cinematic-gradient" />
       <div className="absolute inset-0 z-0 grid-pattern" />
       <div className="absolute inset-0 z-0" style={{
         background: "radial-gradient(ellipse at 60% 40%, hsl(38 95% 50% / 0.06), transparent 50%)",

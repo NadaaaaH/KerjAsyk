@@ -14,8 +14,8 @@ const Navbar = () => {
   }, []);
 
   const navLinks = [
-    { label: "Scan Loker", href: "/#scan-loker", external: false },
-    { label: "Cek Gaji", href: "/#cek-gaji", external: false },
+    { label: "Scan Loker", href: "/scan-loker", external: false },
+    { label: "Cek Gaji", href: "/cek-gaji", external: false },
     { label: "Cara Kerja", href: "/cara-kerja", external: false },
     { label: "Tentang", href: "/tentang", external: false },
   ];
@@ -49,13 +49,13 @@ const Navbar = () => {
         {/* Links desktop */}
         <div className="hidden md:flex items-center gap-1">
           {navLinks.map((link) => {
-            const isActive = location.pathname === link.href;
+            const isActive = location.pathname === link.href || (location.pathname + location.hash) === link.href;
             return (
               <motion.div key={link.label}>
                 <Link
                   to={link.href}
                   data-hover
-                  className="px-4 py-2 rounded-xl text-sm font-medium no-underline block"
+                  className="px-4 py-2 rounded-xl text-sm font-medium no-underline block transition-all duration-300 hover:bg-black/5 hover:text-foreground"
                   style={{ color: isActive ? "hsl(217 91% 50%)" : "hsl(var(--muted-foreground))" }}
                 >
                   {link.label}
@@ -67,7 +67,7 @@ const Navbar = () => {
 
         {/* CTA */}
         <div className="hidden md:block">
-          <Link to="/#scan-loker" data-hover className="no-underline">
+          <Link to="/scan-loker" data-hover className="no-underline">
             <motion.span
               className="px-5 py-2.5 rounded-xl text-sm font-semibold text-white inline-block"
               style={{
@@ -107,19 +107,25 @@ const Navbar = () => {
         transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
       >
         <div className="p-4 flex flex-col gap-1">
-          {navLinks.map((link) => (
-            <Link
-              key={link.label}
-              to={link.href}
-              onClick={() => setMenuOpen(false)}
-              className="px-4 py-3 rounded-xl text-sm font-medium text-foreground no-underline"
-              style={{ background: "hsl(214 32% 95% / 0.6)" }}
-            >
-              {link.label}
-            </Link>
-          ))}
+          {navLinks.map((link) => {
+            const isActive = location.pathname === link.href || (location.pathname + location.hash) === link.href;
+            return (
+              <Link
+                key={link.label}
+                to={link.href}
+                onClick={() => setMenuOpen(false)}
+                className="px-4 py-3 rounded-xl text-sm font-medium no-underline transition-colors active:scale-95 hover:bg-black/5"
+                style={{ 
+                  background: isActive ? "hsl(217 91% 95%)" : "hsl(214 32% 95% / 0.6)",
+                  color: isActive ? "hsl(217 91% 50%)" : "hsl(var(--foreground))"
+                }}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
           <Link
-            to="/#scan-loker"
+            to="/scan-loker"
             onClick={() => setMenuOpen(false)}
             className="mt-2 px-4 py-3 rounded-xl text-sm font-semibold text-white text-center no-underline"
             style={{ background: "linear-gradient(135deg, hsl(217 91% 50%), hsl(217 91% 42%))" }}

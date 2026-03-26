@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 import { FileText, Link, Image, CheckCircle, AlertTriangle, Loader2, Upload, ScanSearch } from "lucide-react";
 
 type TabType = "url" | "teks" | "gambar";
@@ -9,10 +9,11 @@ const SceneScanLoker = () => {
   const ref = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const smoothScroll = useSpring(scrollYProgress, { stiffness: 50, damping: 20 });
 
-  const cardScale = useTransform(scrollYProgress, [0.1, 0.4], [0.92, 1]);
-  const cardY = useTransform(scrollYProgress, [0.1, 0.4], [60, 0]);
-  const cardRotateX = useTransform(scrollYProgress, [0.1, 0.4], [10, 0]);
+  const cardScale = useTransform(smoothScroll, [0.1, 0.4], [0.92, 1]);
+  const cardY = useTransform(smoothScroll, [0.1, 0.4], [60, 0]);
+  const cardRotateX = useTransform(smoothScroll, [0.1, 0.4], [10, 0]);
 
   const [tab, setTab] = useState<TabType>("url");
   const [input, setInput] = useState("");
@@ -50,9 +51,7 @@ const SceneScanLoker = () => {
 
   return (
     <section id="scan-loker" ref={ref} className="scene-container flex items-center justify-center py-32" style={{ minHeight: "130vh" }}>
-      <div className="absolute inset-0 z-0" style={{
-        background: "linear-gradient(180deg, hsl(210 80% 97%) 0%, hsl(214 85% 96%) 50%, hsl(210 80% 97%) 100%)",
-      }} />
+      <div className="absolute inset-0 z-0 cinematic-gradient" />
       <div className="absolute inset-0 z-0 dot-pattern" />
       <div className="absolute inset-0 z-0" style={{
         background: "radial-gradient(ellipse at 40% 50%, hsl(217 91% 50% / 0.07), transparent 55%)",

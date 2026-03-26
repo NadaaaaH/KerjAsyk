@@ -1,4 +1,3 @@
-import CustomCursor from "@/components/CustomCursor";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer.tsx";
 import SceneIntro from "@/components/scenes/SceneIntro";
@@ -16,7 +15,6 @@ const Index = () => {
   return (
     <main className="relative">
       <Navbar />
-      <CustomCursor />
       <SceneIntro />
       <SceneScam />
       <SceneFalling />

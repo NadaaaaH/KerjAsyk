@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 
 const steps = [
   {
@@ -35,7 +35,8 @@ const steps = [
 const SceneCaraKerja = () => {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const floatY = useTransform(scrollYProgress, [0, 1], ["4%", "-4%"]);
+  const smoothScroll = useSpring(scrollYProgress, { stiffness: 50, damping: 20 });
+  const floatY = useTransform(smoothScroll, [0, 1], ["4%", "-4%"]);
 
   return (
     <section
@@ -45,13 +46,7 @@ const SceneCaraKerja = () => {
       style={{ minHeight: "120vh" }}
     >
       {/* Background */}
-      <div
-        className="absolute inset-0 z-0"
-        style={{
-          background:
-            "linear-gradient(180deg, hsl(210 80% 97%) 0%, hsl(214 80% 96%) 50%, hsl(210 80% 97%) 100%)",
-        }}
-      />
+      <div className="absolute inset-0 z-0 cinematic-gradient" />
       <div className="absolute inset-0 z-0 grid-pattern" />
       <div
         className="absolute inset-0 z-0"

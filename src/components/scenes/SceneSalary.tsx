@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { motion, useScroll, useTransform, useMotionValueEvent, AnimatePresence } from "framer-motion";
+import { motion, useScroll, useTransform, useMotionValueEvent, AnimatePresence, useSpring } from "framer-motion";
 import { Briefcase, MapPin, Search, TrendingUp, Loader2, Sparkles, ChevronRight } from "lucide-react";
 
 const barData = [
@@ -30,10 +30,11 @@ const SceneSalary = () => {
   const [activeBar, setActiveBar] = useState<number | null>(null);
 
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const cardRotateX = useTransform(scrollYProgress, [0.1, 0.4], [10, 0]);
-  const cardScale = useTransform(scrollYProgress, [0.1, 0.4], [0.92, 1]);
+  const smoothScroll = useSpring(scrollYProgress, { stiffness: 50, damping: 20 });
+  const cardRotateX = useTransform(smoothScroll, [0.1, 0.4], [10, 0]);
+  const cardScale = useTransform(smoothScroll, [0.1, 0.4], [0.92, 1]);
 
-  useMotionValueEvent(scrollYProgress, "change", (v) => {
+  useMotionValueEvent(smoothScroll, "change", (v) => {
     if (result) return;
     const progress = Math.min(Math.max((v - 0.2) / 0.4, 0), 1);
     setDisplayNumber(Math.round(progress * 12500000));
@@ -64,9 +65,7 @@ const SceneSalary = () => {
   return (
     <section id="cek-gaji" ref={ref} className="scene-container flex items-center justify-center py-32" style={{ minHeight: "140vh" }}>
       {/* Background */}
-      <div className="absolute inset-0 z-0" style={{
-        background: "linear-gradient(180deg, hsl(210 80% 97%) 0%, hsl(160 60% 96%) 40%, hsl(210 80% 97%) 100%)",
-      }} />
+      <div className="absolute inset-0 z-0 hope-gradient" />
       <div className="absolute inset-0 z-0 dot-pattern" />
       <div className="absolute inset-0 z-0" style={{
         background: "radial-gradient(ellipse at 50% 50%, hsl(160 65% 40% / 0.07), transparent 60%)",

@@ -9,6 +9,8 @@ import Index from "./pages/Index.tsx";
 import CaraKerja from "./pages/CaraKerja.tsx";
 import Tentang from "./pages/Tentang";
 import NotFound from "./pages/NotFound.tsx";
+import ScanLoker from "./pages/ScanLoker";
+import CekGaji from "./pages/CekGaji";
 
 const queryClient = new QueryClient();
 
@@ -85,6 +87,8 @@ const App = () => {
               <BrowserRouter>
                 <Routes>
                   <Route path="/" element={<Index />} />
+                  <Route path="/scan-loker" element={<ScanLoker />} />
+                  <Route path="/cek-gaji" element={<CekGaji />} />
                   <Route path="/cara-kerja" element={<CaraKerja />} />
                   <Route path="/tentang" element={<Tentang />} />
                   <Route path="*" element={<NotFound />} />

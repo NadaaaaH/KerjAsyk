@@ -35,7 +35,7 @@ const SceneFinalCTA = () => {
   }, [isMobile, mouseX, mouseY]);
 
   return (
-    <section ref={ref} className="scene-container flex items-center justify-center py-32" style={{ minHeight: "110vh" }}>
+    <section ref={ref} className="relative w-full overflow-hidden flex items-center justify-center pt-32 pb-16">
       <motion.div className="absolute inset-0 z-0" style={{ y: bgY }}>
         <div className="absolute inset-0" style={{
           background: "linear-gradient(180deg, hsl(210 80% 97%) 0%, hsl(214 90% 95%) 50%, hsl(210 80% 97%) 100%)",
@@ -145,18 +145,7 @@ const SceneFinalCTA = () => {
           </motion.a>
         </motion.div>
 
-        <motion.div
-          className="mt-20 pt-8 border-t w-full max-w-xl"
-          style={{ borderColor: "hsl(var(--border))" }}
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1, delay: 0.6 }}
-        >
-          <p className="text-sm text-muted-foreground font-medium">
-            © 2026 KerjaSyik · Deteksi penipuan. Bandingkan gaji. Melangkah pasti.
-          </p>
-        </motion.div>
+        {/* Copyright notice removed to avoid redundancy with the footer directly below */}
       </div>
     </section>
   );

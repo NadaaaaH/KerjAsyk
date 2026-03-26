@@ -54,10 +54,8 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
-    cursor: none;
     background-color: hsl(0 0% 99%);
   }
-  @media (max-width: 768px) { body { cursor: auto; } }
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Poppins', sans-serif;
     letter-spacing: -0.03em;
